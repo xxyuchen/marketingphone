@@ -1,5 +1,6 @@
 package com.geeker.marketing.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.Channel;
 
 /**
@@ -7,5 +8,5 @@ import io.netty.channel.Channel;
  * {desc}
  */
 public interface DeviceRspHandler {
-    void process(Channel channel, String clientId, String deviceMessage);
+    void process(Channel channel, String clientId, JSONObject deviceMessage);
 }

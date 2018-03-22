@@ -1,6 +1,8 @@
 package com.geeker.marketing.netty;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.geeker.marketing.handler.DeviceRspHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
@@ -36,19 +38,19 @@ public class ServerHandler extends CusHeartBeatHandler {
         byte[] data = new byte[byteBuf.readableBytes() - 5];
         logger.info("内容长度:{} 内容类型:{} ByteLength:{}", byteBuf.readInt(), byteBuf.readByte(), byteBuf.readableBytes());
         byteBuf.readBytes(data);
-        String content = new String(data);
-        String[] arr = content.split("\n");
-        String action = arr[0];
-        String clientId = arr[1];
+        JSONObject meta = JSON.parseObject(new String(data));
+        String clientId = meta.getString("serial");
+        String rspAction = meta.getString("rspAction");
         channelHandlerContext.channel().attr(Attributes.DEVICE_ID_ATTR).set(clientId);
-        DeviceRspHandler deviceRspHandler = this.deviceRspHandlerMap.get(action);
+        DeviceRspHandler deviceRspHandler = this.deviceRspHandlerMap.get(rspAction);
         clientHolder.addClient(channelHandlerContext.channel());
         if (null == deviceRspHandler) {
-            logger.warn("没有对应类型的处理器:{} {} {}", action, clientId, arr[2]);
+            logger.warn("没有对应类型的处理器:{} {} {}", rspAction, clientId, meta);
         } else {
-            deviceRspHandler.process(channelHandlerContext.channel(), clientId, arr[2]);
+            deviceRspHandler.process(channelHandlerContext.channel(), clientId, meta);
         }
     }
+
     public void addHandler(String action, DeviceRspHandler deviceRspHandler) {
         this.deviceRspHandlerMap.put(action, deviceRspHandler);
     }

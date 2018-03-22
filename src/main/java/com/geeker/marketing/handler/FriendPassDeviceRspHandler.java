@@ -1,6 +1,5 @@
 package com.geeker.marketing.handler;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +15,8 @@ import org.springframework.stereotype.Component;
 public class FriendPassDeviceRspHandler extends BasicDeviceRspHandler {
 
     @Override
-    public void process(Channel channel, String clientId, String deviceMessage) {
-        JSONObject json = JSON.parseObject(deviceMessage);
-        log.info("设备【{}】--通过好友信息：【{}】",clientId,json);
+    public void process(Channel channel, String clientId, JSONObject deviceMessage) {
+        log.info("设备【{}】--通过好友信息：【{}】",clientId,deviceMessage);
 
         //todo 存储好友信息
 

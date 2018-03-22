@@ -1,5 +1,6 @@
 package com.geeker.marketing.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class RegisterDeviceRspHandler extends BasicDeviceRspHandler {
 
     @Override
-    public void process(Channel channel, String clientId, String deviceMessage) {
+    public void process(Channel channel, String clientId, JSONObject deviceMessage) {
 
     }
 
