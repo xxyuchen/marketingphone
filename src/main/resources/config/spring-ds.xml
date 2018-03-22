@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder file-encoding="utf8" location="classpath*:/config/config-ds.properties"/>
+
+    <bean id="microDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close"
+          p:driverClassName="${db.micro.driver}"
+          p:url="${db.micro.url}"
+          p:username="${db.micro.username}"
+          p:password="${db.micro.password}"
+          p:maxTotal="${db.micro.maxTotal}"
+          p:maxIdle="${db.micro.maxIdle}"
+          p:maxWaitMillis="${db.micro.maxWaitMillis}"
+          p:defaultAutoCommit="${db.micro.defaultAutoCommit}"
+          p:timeBetweenEvictionRunsMillis="${db.micro.timeBetweenEvictionRunsMillis}"
+          p:minEvictableIdleTimeMillis="${db.micro.minEvictableIdleTimeMillis}"
+          p:connectionProperties="${db.micro.connectionProperties}"/>
+
+    <!-- MyBatis -->
+    <bean id="microSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="microDataSource"
+          p:configLocation="classpath:mybatis/micro.xml"
+          p:mapperLocations="classpath*:mybatis/micro/*/*.xml"
+          p:typeAliasesPackage="com.geeker.marketing.dao.micro.generator.model,com.geeker.marketing.dao.micro.custom.model"/>
+
+    <!-- Mybatis Mapper Scan -->
+    <bean id="microScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+          p:basePackage="com.geeker.marketing.dao.micro"
+          p:sqlSessionFactoryBeanName="microSqlSessionFactory"/>
+
+    <bean id="geekerDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close"
+          p:driverClassName="${db.geeker.driver}"
+          p:url="${db.geeker.url}"
+          p:username="${db.geeker.username}"
+          p:password="${db.geeker.password}"
+          p:maxTotal="${db.geeker.maxTotal}"
+          p:maxIdle="${db.geeker.maxIdle}"
+          p:maxWaitMillis="${db.geeker.maxWaitMillis}"
+          p:defaultAutoCommit="${db.geeker.defaultAutoCommit}"
+          p:timeBetweenEvictionRunsMillis="${db.geeker.timeBetweenEvictionRunsMillis}"
+          p:minEvictableIdleTimeMillis="${db.geeker.minEvictableIdleTimeMillis}"
+          p:connectionProperties="${db.geeker.connectionProperties}"/>
+
+    <bean id="geekerSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="geekerDataSource"
+          p:configLocation="classpath:mybatis/geeker.xml"
+          p:mapperLocations="classpath*:mybatis/geeker/*/*.xml"
+          p:typeAliasesPackage="com.geeker.marketing.dao.geeker.generator.model,com.geeker.marketing.dao.geeker.custom.model"/>
+
+    <!-- Mybatis Mapper Scan -->
+    <bean id="geekerScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+          p:basePackage="com.geeker.marketing.dao.geeker"
+          p:sqlSessionFactoryBeanName="geekerSqlSessionFactory"/>
+</beans>

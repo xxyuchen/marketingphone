@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <properties resource="config/config-ds.properties"/>
+    <classPathEntry location="C:/Users/Administrator/.m2/repository/mysql/mysql-connector-java/5.1.42/mysql-connector-java-5.1.42.jar" />
+    <context id="testTables" targetRuntime="MyBatis3" >
+        <!-- 生成的Java文件的编码 -->
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <!-- 格式化java代码 -->
+        <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
+        <!-- 格式化XML代码 -->
+        <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
+
+        <!--<plugin type="com.slowlybirld.mybatis.plugins.PageHelperRowBoundsPlugin"/>-->
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
+        <!--<plugin type="com.slowlybirld.mybatis.plugins.BaseMapperGeneratorPlugin">-->
+            <!--<property name="superInterface" value="com.slowlybirld.iot.mapper.BaseMapper"/>-->
+        <!--</plugin>-->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin">
+            <property name="suppressJavaInterface" value="false" />
+        </plugin>
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+
+        <commentGenerator>
+            <property name="suppressAllComments" value="false"/>
+            <property name="suppressDate" value="true"/>
+        </commentGenerator>
+        <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
+        <jdbcConnection  driverClass="${db.micro.driver}"
+                         connectionURL="${db.micro.url}"
+                         userId="${db.micro.username}" password="${db.micro.password}">
+        </jdbcConnection>
+
+        <!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和
+            NUMERIC 类型解析为java.math.BigDecimal -->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false" />
+            <property name="tinyint" value="Integer" />
+        </javaTypeResolver>
+
+        <!-- 配置自动生成mode生成位置以及其他参数 -->
+        <javaModelGenerator targetPackage="com.geeker.marketing.dao.micro.generator.model" targetProject="src/main/java">
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="false" />
+            <!-- 从数据库返回的值被清理前后的空格 -->
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+        <!-- 配置自动生成mapper.xml映射文件生成的位置 以及其他参数-->
+        <sqlMapGenerator targetPackage="mybatis.micro.generator" targetProject="src/main/resources">
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="false" />
+        </sqlMapGenerator>
+        <!-- 配置mapper.java接口生成的位置 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.geeker.marketing.dao.micro.generator.mapper" targetProject="src/main/java">
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="false" />
+            <!--<property name="basePackage" value="com.easy.web.utils.BaseMapper"/>-->
+        </javaClientGenerator>
+
+        <!--指定数据库表 每次生成注释调 防止下次生成会重复追加mapper.xml文件内容-->
+        <table tableName="micro_device">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+        <table tableName="op_connect_pool">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+        <table tableName="op_device">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+        <table tableName="op_device_cmd">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="deliver_status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+            <columnOverride column="receive_status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+        <table tableName="op_device_report">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+        <table tableName="sys_error_proc_log">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+        <table tableName="wx_account">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+        <table tableName="wx_event">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+        <table tableName="wx_fans">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+        <table tableName="wx_group_fans">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+        <table tableName="wx_msg">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+
+        <!--<table tableName="micro_task_log">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
+        </table>
+
+        <table tableName="micro_task_log_detail">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+        <table tableName="micro_wx">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="micro_wx_fans">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="micro_wx_group_fans">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+        <table tableName="micro_mobile_translate_task">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>-->
+
+    </context>
+</generatorConfiguration>
