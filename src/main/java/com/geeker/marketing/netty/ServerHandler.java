@@ -54,4 +54,9 @@ public class ServerHandler extends CusHeartBeatHandler {
     public void addHandler(String action, DeviceRspHandler deviceRspHandler) {
         this.deviceRspHandlerMap.put(action, deviceRspHandler);
     }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+    }
 }

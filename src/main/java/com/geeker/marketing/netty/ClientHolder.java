@@ -59,7 +59,7 @@ public class ClientHolder extends ChannelInboundHandlerAdapter {
             channel.pipeline().addFirst(this.getClass().getSimpleName(), this);
             channelMap.put(channel.attr(Attributes.DEVICE_ID_ATTR).get(), channel);
         }
-        eventPublisher.publishEvent(new AddClientEvent(null,deviceId));
+        eventPublisher.publishEvent(new AddClientEvent("",deviceId));
     }
 
     @Override

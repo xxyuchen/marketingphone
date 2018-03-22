@@ -4,14 +4,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-* @Author TangZhen
-* @Date 2018/3/13 0013 14:52
-* @Description  连接心跳
-*/
+ * @Author TangZhen
+ * @Date 2018/3/13 0013 14:52
+ * @Description 连接心跳
+ */
 @Slf4j
 public abstract class CusHeartBeatHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
@@ -31,10 +30,10 @@ public abstract class CusHeartBeatHandler extends SimpleChannelInboundHandler<By
         String deviceId = ctx.channel().attr(Attributes.DEVICE_ID_ATTR).get();
         try {
             if (msg.getByte(4) == PING_MSG) {
-                log.info("The client {} is online and send a 'ping'...",deviceId);
+                log.debug("The client {} is online and send a 'ping'...", deviceId);
                 sendPongMsg(ctx);
             } else if (msg.getByte(4) == PONG_MSG) {
-                log.info(name + " get pong msg from " + ctx.channel().remoteAddress());
+                log.debug(name + " get pong msg from " + ctx.channel().remoteAddress());
             } else if (msg.getByte(4) == CUSTOM_MSG) {
                 handleData(ctx, msg);
             }

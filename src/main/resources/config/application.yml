@@ -8,7 +8,7 @@ netty:
   so:
     keep_alive: true
     backlog: 50
-  port: 18080
+  port: 18088
   boss:
     threads: 1
   worker:
