@@ -2,11 +2,13 @@ package com.geeker.marketing.netty;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.geeker.marketing.handler.DeviceRspHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -40,10 +42,30 @@ public class ServerHandler extends CusHeartBeatHandler {
         byteBuf.readBytes(data);
         JSONObject meta = JSON.parseObject(new String(data));
         String clientId = meta.getString("serial");
-        String rspAction = meta.getString("rspAction");
         channelHandlerContext.channel().attr(Attributes.DEVICE_ID_ATTR).set(clientId);
-        DeviceRspHandler deviceRspHandler = this.deviceRspHandlerMap.get(rspAction);
         clientHolder.addClient(channelHandlerContext.channel());
+
+        String rspAction = meta.getString("rspAction");
+        if (StringUtils.equals("batch", rspAction)) {
+            JSONArray list = meta.getJSONArray("list");
+            for (int i = 0; i < list.size(); i++) {
+                JSONObject item = JSON.parseObject(list.getString(i));
+                String _rspAction = item.getString("rspAction");
+                try {
+                    processRequestData(channelHandlerContext, item, clientId, _rspAction);
+                } catch (Throwable e) {
+                    logger.warn("数据处理异常", e);
+                }
+            }
+        } else {
+            processRequestData(channelHandlerContext, meta, clientId, rspAction);
+        }
+
+
+    }
+
+    private void processRequestData(ChannelHandlerContext channelHandlerContext, JSONObject meta, String clientId, String rspAction) {
+        DeviceRspHandler deviceRspHandler = this.deviceRspHandlerMap.get(rspAction);
         if (null == deviceRspHandler) {
             logger.warn("没有对应类型的处理器:{} {} {}", rspAction, clientId, meta);
         } else {
