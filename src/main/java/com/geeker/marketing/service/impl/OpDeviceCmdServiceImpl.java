@@ -34,4 +34,13 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         List<OpDeviceCmd> opDeviceCmds = opDeviceCmdMapper.selectByExample(example);
         return opDeviceCmds;
     }
+
+    @Override
+    public void updateDeliverStatus(String id, Integer status, String result) {
+        OpDeviceCmd opDeviceCmd = new OpDeviceCmd();
+        opDeviceCmd.setId(id);
+        opDeviceCmd.setDeliverStatus(status);
+        opDeviceCmd.setReceiveResult(result);
+        opDeviceCmdMapper.updateByPrimaryKey(opDeviceCmd);
+    }
 }

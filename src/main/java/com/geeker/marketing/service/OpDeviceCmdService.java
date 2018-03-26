@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface OpDeviceCmdService {
     List<OpDeviceCmd> notIssuedCmd(String deviceId);
+
+    void updateDeliverStatus(String id,Integer status,String result);
 }

@@ -3,6 +3,12 @@ server:
 spring:
   application:
     name: micro-server
+  rocketmq:
+      namesrvAddr: 192.168.0.160:9876
+      producer:
+        instanceName: market_phone_service_producer
+      consumer:
+        subscribe: op_device_cmd
 
 netty:
   so:
@@ -25,10 +31,3 @@ swagger:
 rsa:
   publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPHGt5UUG5fmbvWEw9ktHcLwHQeQ5fbVpOGjx56UI1DGSozIcwXUpObW1hujJGzG2tOhvO6Mn9sqQJ6aNlVIgsUoIgzuFAaoQ43KAprp7ju6MHmEPDhmhDn8G1EF/BDKLiyAeCMeC9lUq1QQuDIGIM7mGpTlGVsoW5jARVaJVMzQIDAQAB
   privateKey: MIICeQIBADANBgkqhkiG9w0BAQEFAASCAmMwggJfAgEAAoGBAI8ca3lRQbl+Zu9YTD2S0dwvAdB5Dl9tWk4aPHnpQjUMZKjMhzBdSk5tbWG6MkbMba06G87oyf2ypAnpo2VUiCxSgiDO4UBqhDjcoCmunuO7oweYQ8OGaEOfwbUQX8EMouLIB4Ix4L2VSrVBC4MgYgzuYalOUZWyhbmMBFVolUzNAgMBAAECgYEAhb7Jsld+VR0MliKvHdxYxK4pw+tew1AvVU6vtj+I4Ir0h8ydi1WkXCdoUizxT7k9xubHlld4buDE7X6sdcbKeztbPPR2wsDpjgtk6cnkTrBmxkE1U85GrBeJibgVxkTfZdryfU6PkfbtnUd604WcSLjz3B/S9Nh8gKfQX4BzKwECQQDJ3cJ6/8iOpHRdpiOsqIoO1TRJUC2U4PMT+QqUPyUdLFgFVN8bAllfTMaBUEfY34eLXic9hvwmYrNpjeDRuL3TAkEAtX0T5XQYqap41sWjXv6KRiCF1UGb0D9hRb3TrGnpZlgiucS50poK1n7IzyVRNnUWBFUCHfhBn/5FYYWsKNcG3wJBAISykyqZw/QIpTn+gcr5C7AOdQ2QeDY63W+OsWacT8Bqqv3uOa8ejzN3W7Ib3O7ymb6CyRbICi8NiNTlYBlc8OMCQQCYuW660l3GuUwDAEIguHbH2KqG8TUbo5pJxBqSpnXgyB5A0cnF7hdctUhq+O5Es3cZoier7LPc3W6pSIG9xGVlAkEAqYdi1NN8KVltFpSJSbGNNXWG7rH8uBLVrEHETz/z6WwAIDOWC6lvFjtHlnWmngnWXcAU1NxIgBysNcyHd5Y6mg==
-
-rocketMQ:
-  namesrvAddr: 192.168.0.160:9876
-  producer:
-    instanceName: cloud_cpntroller_service_producer
-  consumer:
-    subscribe: MICRO_VISIT_LOG
