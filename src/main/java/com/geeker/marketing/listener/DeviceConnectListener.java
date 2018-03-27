@@ -35,8 +35,15 @@ public class DeviceConnectListener implements ApplicationListener<ClientHolder.A
         try {
             String deviceId = addClientEvent.getDeviceId();
             List<OpDeviceCmd> opDeviceCmds = opDeviceCmdService.notIssuedCmd(deviceId);
+            log.info("MarketingPhone:设备【{}】有【{}】条指令未下发...",deviceId,opDeviceCmds.size());
             for (OpDeviceCmd cmd : opDeviceCmds) {
-                Message message = new Message("op_device_cmd", cmd.getCmdCd(),cmd.getId()+"#"+cmd.getDeviceId(),cmd.getCmdParm().getBytes());
+                Map<String,Object> map = new HashMap<>(8);
+                map.put("cmdId",cmd.getId());
+                map.put("cmdParm",cmd.getCmdParm());
+                map.put("cmdCd",cmd.getCmdCd());
+                map.put("cmdTypeCd",cmd.getCmdTypeCd());
+                map.put("deviceId",cmd.getDeviceId());
+                Message message = new Message("issue_cmd", cmd.getDeviceId(),cmd.getId(),map.toString().getBytes());
                 cmdProducer.send(message);
                 log.info("MarketingPhone:向【{}】发送的类型为【{}】指令【{}】入队列...",cmd.getDeviceId(),cmd.getCmdCd(),cmd.getCmdParm());
             }

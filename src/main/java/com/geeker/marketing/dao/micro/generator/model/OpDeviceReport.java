@@ -74,7 +74,7 @@ public class OpDeviceReport implements Serializable {
      *
      * @mbg.generated
      */
-    private Boolean receiveStatus;
+    private Integer receiveStatus;
 
     /**
      *
@@ -296,7 +296,7 @@ public class OpDeviceReport implements Serializable {
      *
      * @mbg.generated
      */
-    public Boolean getReceiveStatus() {
+    public Integer getReceiveStatus() {
         return receiveStatus;
     }
 
@@ -308,7 +308,7 @@ public class OpDeviceReport implements Serializable {
      *
      * @mbg.generated
      */
-    public void setReceiveStatus(Boolean receiveStatus) {
+    public void setReceiveStatus(Integer receiveStatus) {
         this.receiveStatus = receiveStatus;
     }
 

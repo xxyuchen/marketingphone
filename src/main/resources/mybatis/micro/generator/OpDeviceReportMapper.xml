@@ -13,7 +13,7 @@
     <result column="cmd_cd" jdbcType="VARCHAR" property="cmdCd" />
     <result column="receive_result" jdbcType="VARCHAR" property="receiveResult" />
     <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime" />
-    <result column="receive_status" jdbcType="BIT" property="receiveStatus" />
+    <result column="receive_status" jdbcType="TINYINT" property="receiveStatus" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="queue" jdbcType="VARCHAR" property="queue" />
     <result column="message_id" jdbcType="VARCHAR" property="messageId" />
@@ -153,7 +153,7 @@
       message_id, queue_time)
     values (#{comId,jdbcType=INTEGER}, #{deviceId,jdbcType=VARCHAR}, #{cmdTypeCd,jdbcType=VARCHAR}, 
       #{cmdCd,jdbcType=VARCHAR}, #{receiveResult,jdbcType=VARCHAR}, #{receiveTime,jdbcType=TIMESTAMP}, 
-      #{receiveStatus,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{queue,jdbcType=VARCHAR}, 
+      #{receiveStatus,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{queue,jdbcType=VARCHAR}, 
       #{messageId,jdbcType=VARCHAR}, #{queueTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.geeker.marketing.dao.micro.generator.model.OpDeviceReport">
@@ -220,7 +220,7 @@
         #{receiveTime,jdbcType=TIMESTAMP},
       </if>
       <if test="receiveStatus != null">
-        #{receiveStatus,jdbcType=BIT},
+        #{receiveStatus,jdbcType=TINYINT},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -275,7 +275,7 @@
         receive_time = #{record.receiveTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.receiveStatus != null">
-        receive_status = #{record.receiveStatus,jdbcType=BIT},
+        receive_status = #{record.receiveStatus,jdbcType=TINYINT},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -307,7 +307,7 @@
       cmd_cd = #{record.cmdCd,jdbcType=VARCHAR},
       receive_result = #{record.receiveResult,jdbcType=VARCHAR},
       receive_time = #{record.receiveTime,jdbcType=TIMESTAMP},
-      receive_status = #{record.receiveStatus,jdbcType=BIT},
+      receive_status = #{record.receiveStatus,jdbcType=TINYINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       queue = #{record.queue,jdbcType=VARCHAR},
       message_id = #{record.messageId,jdbcType=VARCHAR},
@@ -342,7 +342,7 @@
         receive_time = #{receiveTime,jdbcType=TIMESTAMP},
       </if>
       <if test="receiveStatus != null">
-        receive_status = #{receiveStatus,jdbcType=BIT},
+        receive_status = #{receiveStatus,jdbcType=TINYINT},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -371,7 +371,7 @@
       cmd_cd = #{cmdCd,jdbcType=VARCHAR},
       receive_result = #{receiveResult,jdbcType=VARCHAR},
       receive_time = #{receiveTime,jdbcType=TIMESTAMP},
-      receive_status = #{receiveStatus,jdbcType=BIT},
+      receive_status = #{receiveStatus,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       queue = #{queue,jdbcType=VARCHAR},
       message_id = #{messageId,jdbcType=VARCHAR},

@@ -665,52 +665,52 @@ public class OpDeviceReportExample {
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusEqualTo(Boolean value) {
+        public Criteria andReceiveStatusEqualTo(Integer value) {
             addCriterion("receive_status =", value, "receiveStatus");
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusNotEqualTo(Boolean value) {
+        public Criteria andReceiveStatusNotEqualTo(Integer value) {
             addCriterion("receive_status <>", value, "receiveStatus");
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusGreaterThan(Boolean value) {
+        public Criteria andReceiveStatusGreaterThan(Integer value) {
             addCriterion("receive_status >", value, "receiveStatus");
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andReceiveStatusGreaterThanOrEqualTo(Integer value) {
             addCriterion("receive_status >=", value, "receiveStatus");
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusLessThan(Boolean value) {
+        public Criteria andReceiveStatusLessThan(Integer value) {
             addCriterion("receive_status <", value, "receiveStatus");
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusLessThanOrEqualTo(Boolean value) {
+        public Criteria andReceiveStatusLessThanOrEqualTo(Integer value) {
             addCriterion("receive_status <=", value, "receiveStatus");
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusIn(List<Boolean> values) {
+        public Criteria andReceiveStatusIn(List<Integer> values) {
             addCriterion("receive_status in", values, "receiveStatus");
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusNotIn(List<Boolean> values) {
+        public Criteria andReceiveStatusNotIn(List<Integer> values) {
             addCriterion("receive_status not in", values, "receiveStatus");
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusBetween(Boolean value1, Boolean value2) {
+        public Criteria andReceiveStatusBetween(Integer value1, Integer value2) {
             addCriterion("receive_status between", value1, value2, "receiveStatus");
             return (Criteria) this;
         }
 
-        public Criteria andReceiveStatusNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andReceiveStatusNotBetween(Integer value1, Integer value2) {
             addCriterion("receive_status not between", value1, value2, "receiveStatus");
             return (Criteria) this;
         }

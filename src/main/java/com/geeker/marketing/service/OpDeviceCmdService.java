@@ -1,6 +1,8 @@
 package com.geeker.marketing.service;
 
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmd;
+import com.geeker.marketing.response.Response;
+import com.geeker.marketing.vo.OpDeviceCmdVo;
 
 import java.util.List;
 
@@ -11,4 +13,10 @@ public interface OpDeviceCmdService {
     List<OpDeviceCmd> notIssuedCmd(String deviceId);
 
     void updateDeliverStatus(String id,Integer status,String result);
+
+    int update(OpDeviceCmd opDeviceCmd);
+
+    int insert(OpDeviceCmd opDeviceCmd);
+
+    Response issueCmd(OpDeviceCmdVo vo) throws Exception;
 }
