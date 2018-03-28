@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.geeker.marketing.handler.DeviceRspHandler;
+import com.geeker.marketing.service.AuthenticateService;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,18 +35,21 @@ public class ServerHandler extends CusHeartBeatHandler {
     @Resource
     private ClientHolder clientHolder;
 
+    @Resource
+    private AuthenticateService authenticateService;
+
     private Map<String, DeviceRspHandler> deviceRspHandlerMap = new ConcurrentHashMap<>();
 
     @Override
     protected void handleData(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception {
-        byte[] data = new byte[byteBuf.readableBytes() - 5];
-        logger.info("内容长度:{} 内容类型:{} ByteLength:{}", byteBuf.readInt(), byteBuf.readByte(), byteBuf.readableBytes());
-        byteBuf.readBytes(data);
-        JSONObject meta = JSON.parseObject(new String(data));
-        String clientId = meta.getString("serial");
-        channelHandlerContext.channel().attr(Attributes.DEVICE_ID_ATTR).set(clientId);
-        clientHolder.addClient(channelHandlerContext.channel());
-
+        Boolean authenticated = channelHandlerContext.channel().attr(Attributes.AUTHENTICATED_ATTR).get();
+        if (null == authenticated || !authenticated) {
+            logger.info("接收到未认证的数据请求,连接将被强制关闭");
+            channelHandlerContext.channel().close();
+            return;
+        }
+        JSONObject meta = JSON.parseObject(new String(read(byteBuf, 5), Charset.forName("utf-8")));
+        String clientId = channelHandlerContext.channel().attr(Attributes.DEVICE_ID_ATTR).get();
         String rspAction = meta.getString("rspAction");
         if (StringUtils.equals("batch", rspAction)) {
             JSONArray list = meta.getJSONArray("list");
@@ -60,8 +65,6 @@ public class ServerHandler extends CusHeartBeatHandler {
         } else {
             processRequestData(channelHandlerContext, meta, clientId, rspAction);
         }
-
-
     }
 
     private void processRequestData(ChannelHandlerContext channelHandlerContext, JSONObject meta, String clientId, String rspAction) {
@@ -73,12 +76,35 @@ public class ServerHandler extends CusHeartBeatHandler {
         }
     }
 
+    /**
+     * 设备认证处理
+     *
+     * @param channelHandlerContext
+     * @param byteBuf
+     * @throws Exception
+     */
+    @Override
+    protected void handleAuth(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception {
+        JSONObject meta = JSON.parseObject(new String(read(byteBuf, 5), Charset.forName("utf-8")));
+        String ticket = meta.getString("ticket");
+        String serial = meta.getString("serial");
+        if (authenticateService.authTicket(serial, ticket)) {
+            channelHandlerContext.channel().attr(Attributes.DEVICE_ID_ATTR).set(serial);
+            channelHandlerContext.channel().attr(Attributes.AUTHENTICATED_ATTR).set(true);
+            sendAuth(channelHandlerContext, "success", null);
+            clientHolder.addClient(channelHandlerContext.channel());
+        } else {
+            sendAuth(channelHandlerContext, "fail", null);
+        }
+    }
+
     public void addHandler(String action, DeviceRspHandler deviceRspHandler) {
         this.deviceRspHandlerMap.put(action, deviceRspHandler);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
+        sendAuth(ctx, "auth", null);
+        ctx.fireChannelActive();
     }
 }

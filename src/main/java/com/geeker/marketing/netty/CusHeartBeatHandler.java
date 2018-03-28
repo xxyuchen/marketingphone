@@ -1,10 +1,15 @@
 package com.geeker.marketing.netty;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
+
+import java.nio.charset.Charset;
 
 /**
  * @Author TangZhen
@@ -17,6 +22,7 @@ public abstract class CusHeartBeatHandler extends SimpleChannelInboundHandler<By
     public static final byte PING_MSG = 1;
     public static final byte PONG_MSG = 2;
     public static final byte CUSTOM_MSG = 3;
+    public static final byte AUTH_MSG = 4;
     protected String name;
     private boolean sendPong = true;
 
@@ -29,13 +35,21 @@ public abstract class CusHeartBeatHandler extends SimpleChannelInboundHandler<By
         msg.markReaderIndex();
         String deviceId = ctx.channel().attr(Attributes.DEVICE_ID_ATTR).get();
         try {
-            if (msg.getByte(4) == PING_MSG) {
-                log.debug("The client {} is online and send a 'ping'...", deviceId);
-                sendPongMsg(ctx);
-            } else if (msg.getByte(4) == PONG_MSG) {
-                log.debug(name + " get pong msg from " + ctx.channel().remoteAddress());
-            } else if (msg.getByte(4) == CUSTOM_MSG) {
-                handleData(ctx, msg);
+            byte type = msg.getByte(4);
+            switch (type) {
+                case PING_MSG:
+                    log.debug("The client {} is online and send a 'ping'...", deviceId);
+                    sendPongMsg(ctx);
+                    break;
+                case PONG_MSG:
+                    log.debug(name + " get pong msg from " + ctx.channel().remoteAddress());
+                    break;
+                case AUTH_MSG:
+                    handleAuth(ctx, msg);
+                    break;
+                case CUSTOM_MSG:
+                    handleData(ctx, msg);
+                    break;
             }
         } finally {
             msg.resetReaderIndex();
@@ -43,6 +57,36 @@ public abstract class CusHeartBeatHandler extends SimpleChannelInboundHandler<By
     }
 
     protected abstract void handleData(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception;
+
+    protected void handleAuth(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception {
+    }
+
+    protected byte[] read(ByteBuf msg, int skip) {
+        byte[] data = new byte[msg.readableBytes() - 5];
+        msg.skipBytes(skip);
+        msg.readBytes(data);
+        return data;
+    }
+
+    protected void sendAuth(ChannelHandlerContext channelHandlerContext, String authData, GenericFutureListener<? extends Future<? super Void>> listener) {
+        ByteBuf byteBuf = null;
+        try {
+            byte[] data = authData.getBytes(Charset.forName("utf-8"));
+            byteBuf = channelHandlerContext.alloc().buffer();
+            byteBuf.retain();
+            byteBuf.writeInt(5 + data.length);
+            byteBuf.writeByte(CusHeartBeatHandler.AUTH_MSG);
+            byteBuf.writeBytes(data, 0, data.length);
+            ChannelFuture channelFuture = channelHandlerContext.writeAndFlush(byteBuf);
+            if (null != listener) {
+                channelFuture.addListener(listener);
+            }
+        } finally {
+            if (null != byteBuf) {
+                byteBuf.release();
+            }
+        }
+    }
 
     protected void sendPingMsg(ChannelHandlerContext context) {
         ByteBuf buf = context.alloc().buffer(5);
