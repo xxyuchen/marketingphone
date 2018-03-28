@@ -42,8 +42,8 @@ public class ServerHandler extends CusHeartBeatHandler {
 
     @Override
     protected void handleData(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception {
-        Boolean authenticated = channelHandlerContext.channel().attr(Attributes.AUTHENTICATED_ATTR).get();
-        if (null == authenticated || !authenticated) {
+        boolean authenticated = channelHandlerContext.channel().attr(Attributes.AUTHENTICATED_ATTR).get();
+        if (!authenticated) {
             logger.info("接收到未认证的数据请求,连接将被强制关闭");
             channelHandlerContext.channel().close();
             return;
@@ -104,6 +104,7 @@ public class ServerHandler extends CusHeartBeatHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ctx.channel().attr(Attributes.AUTHENTICATED_ATTR).set(false);
         sendAuth(ctx, "auth", null);
         ctx.fireChannelActive();
     }
