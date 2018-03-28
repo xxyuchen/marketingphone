@@ -74,7 +74,7 @@
             <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
         </table>
         <table tableName="op_device_cmd">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
             <columnOverride column="deliver_status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
             <columnOverride column="receive_status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
         </table>

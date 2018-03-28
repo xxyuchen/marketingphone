@@ -4,6 +4,7 @@ import com.geeker.marketing.dao.micro.generator.mapper.OpDeviceCmdMapper;
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmd;
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmdExample;
 import com.geeker.marketing.enums.CmdEnum;
+import com.geeker.marketing.listener.PublicEvent;
 import com.geeker.marketing.netty.ClientHolder;
 import com.geeker.marketing.response.Response;
 import com.geeker.marketing.response.ResponseUtils;
@@ -11,6 +12,7 @@ import com.geeker.marketing.service.OpDeviceCmdService;
 import com.geeker.marketing.utils.FactoryIdUtils;
 import com.geeker.marketing.vo.OpDeviceCmdVo;
 import io.netty.channel.Channel;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,6 +28,7 @@ import java.util.List;
 * @Description  消息指令业务（下发--回调--消息队列）
 */
 @Service
+@Slf4j
 public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
 
     @Resource
@@ -49,6 +52,11 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         example.createCriteria().andDeliverStatusEqualTo(CmdEnum.DeliverStatusEnum.UNDO.getCode());
         List<OpDeviceCmd> opDeviceCmds = opDeviceCmdMapper.selectByExample(example);
         return opDeviceCmds;
+    }
+
+    @Override
+    public OpDeviceCmd getByCmdId(String cmdId) {
+        return opDeviceCmdMapper.selectByPrimaryKey(cmdId);
     }
 
     @Override
@@ -87,14 +95,16 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         BeanUtils.copyProperties(vo,opDeviceCmd);
         opDeviceCmd.setCreateTime(new Date());
         opDeviceCmd.setId(id);
+        log.info("下发指令入库【{}】",id);
         if(opDeviceCmdMapper.insert(opDeviceCmd)<=0){
             return ResponseUtils.error(500,"操作失败！");
         }
-        Channel channel = clientHolder.getClient(id);
+            Channel channel = clientHolder.getClient(vo.getDeviceId());
         if(null == channel){
+            log.error("设备【{}】未连接...",vo.getDeviceId());
             return ResponseUtils.error(500,"设备未连接，会在设备连接后下发该指令！");
         }
-        eventPublisher.publishEvent(new ClientHolder.AddClientEvent("",vo.getDeviceId()));
+        eventPublisher.publishEvent(new PublicEvent.IssueCmdEvent("",id));
         return ResponseUtils.success();
     }
 }

@@ -12,6 +12,8 @@ import java.util.List;
 public interface OpDeviceCmdService {
     List<OpDeviceCmd> notIssuedCmd(String deviceId);
 
+    OpDeviceCmd getByCmdId(String cmdId);
+
     void updateDeliverStatus(String id,Integer status,String result);
 
     int update(OpDeviceCmd opDeviceCmd);

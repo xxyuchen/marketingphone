@@ -9,6 +9,7 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.exception.RemotingException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -25,6 +26,9 @@ public class EventReportHandler extends BasicDeviceRspHandler {
     @Resource(name = "cmdProducer")
     private DefaultMQProducer cmdProducer;
 
+    @Value("${spring.rocketmq.topic.report-topic}")
+    private String reportTopic;
+
     @Override
     public void process(Channel channel, String clientId, JSONObject deviceMessage) {
         String eventType = deviceMessage.getString("event");
@@ -33,12 +37,7 @@ public class EventReportHandler extends BasicDeviceRspHandler {
         json.put("queueTime",new Date());
         log.info("接收到事件消息[{}:{}]", eventType, date);
         //丢入队列
-        Message message = new Message("report_cmd", eventType,clientId,json.toJSONString().getBytes());
-/*        if(eventType.equals("")){ //主动上报指令
-            message = new Message("init_report_cmd", eventType,clientId,json.toJSONString().getBytes());
-        }else if (eventType.equals("")){ //下发指令执行状况回调
-            message = new Message("issue_report_cmd", eventType,clientId,json.toJSONString().getBytes());
-        }*/
+        Message message = new Message(reportTopic, eventType,clientId,json.toJSONString().getBytes());
         try {
             cmdProducer.send(message);
         } catch (Exception e) {

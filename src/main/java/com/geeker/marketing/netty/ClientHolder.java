@@ -1,5 +1,6 @@
 package com.geeker.marketing.netty;
 
+import com.geeker.marketing.listener.PublicEvent;
 import com.geeker.marketing.service.MicroDeviceService;
 import com.geeker.marketing.service.OpConnectPoolService;
 import com.geeker.marketing.utils.DeviceNotFindException;
@@ -8,10 +9,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.AttributeKey;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -59,7 +57,7 @@ public class ClientHolder extends ChannelInboundHandlerAdapter {
             channel.pipeline().addFirst(this.getClass().getSimpleName(), this);
             channelMap.put(channel.attr(Attributes.DEVICE_ID_ATTR).get(), channel);
         }
-        eventPublisher.publishEvent(new AddClientEvent("",deviceId));
+        eventPublisher.publishEvent(new PublicEvent.AddClientEvent("",deviceId));
     }
 
     @Override
@@ -85,15 +83,5 @@ public class ClientHolder extends ChannelInboundHandlerAdapter {
             deviceVOS.add(device);
         }
         return deviceVOS;
-    }
-
-    public static class AddClientEvent extends ApplicationEvent{
-        @Getter
-        private String deviceId;
-
-        public AddClientEvent(Object source,String deviceId) {
-            super(source);
-            this.deviceId = deviceId;
-        }
     }
 }

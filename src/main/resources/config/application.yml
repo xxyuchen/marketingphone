@@ -9,6 +9,9 @@ spring:
         instanceName: market_phone_service_producer
       consumer:
         subscribe: op_device_cmd
+      topic:
+        report-topic: report_cmd
+        issue-topic: issue_cmd
 
 netty:
   so:

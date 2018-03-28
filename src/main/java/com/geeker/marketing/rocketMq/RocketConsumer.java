@@ -57,6 +57,12 @@ public class RocketConsumer {
     @Value("${spring.profiles.active:default}")
     private String activeProfiles;
 
+    @Value("${spring.rocketmq.topic.report-topic}")
+    private String reportTopic;
+
+    @Value("${spring.rocketmq.topic.issue-topic}")
+    private String issueTopic;
+
     /**
      * 初始化rocketmq消息监听方式的消费者
      */
@@ -75,7 +81,7 @@ public class RocketConsumer {
         consumer.setConsumeThreadMin(consumerConfig.getMinConsumers());
         consumer.setConsumeThreadMax(consumerConfig.getMaxConsumers());
 
-        consumer.subscribe("issue_cmd", "*");
+        consumer.subscribe(issueTopic, "*");
 
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
@@ -112,7 +118,7 @@ public class RocketConsumer {
 
     }
     /**
-     * 初始化rocketmq消息监听方式的消费者
+     * 初始化rocketmq消息监听方式的消费者(上报消息处理)
      */
     @Bean(destroyMethod = "shutdown")
     @Lazy(false)
@@ -129,7 +135,7 @@ public class RocketConsumer {
         consumer.setConsumeThreadMin(consumerConfig.getMinConsumers());
         consumer.setConsumeThreadMax(consumerConfig.getMaxConsumers());
 
-        consumer.subscribe("report_cmd", "*");
+        consumer.subscribe(reportTopic, "*");
 
         consumer.registerMessageListener((List<MessageExt> msgs, ConsumeConcurrentlyContext context) -> {
             MessageExt msg = msgs.get(0);

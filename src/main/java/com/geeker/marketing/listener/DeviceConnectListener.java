@@ -6,6 +6,7 @@ import com.geeker.marketing.service.OpDeviceCmdService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
@@ -22,16 +23,19 @@ import java.util.Map;
  */
 @Component
 @Slf4j
-public class DeviceConnectListener implements ApplicationListener<ClientHolder.AddClientEvent> {
+public class DeviceConnectListener implements ApplicationListener<PublicEvent.AddClientEvent> {
     @Resource
     private OpDeviceCmdService opDeviceCmdService;
 
     @Resource(name = "cmdProducer")
     private DefaultMQProducer cmdProducer;
 
+    @Value("${spring.rocketmq.topic.issue-topic}")
+    private String issueTopic;
+
 
     @Override
-    public void onApplicationEvent(ClientHolder.AddClientEvent addClientEvent) {
+    public void onApplicationEvent(PublicEvent.AddClientEvent addClientEvent) {
         try {
             String deviceId = addClientEvent.getDeviceId();
             List<OpDeviceCmd> opDeviceCmds = opDeviceCmdService.notIssuedCmd(deviceId);
@@ -43,7 +47,7 @@ public class DeviceConnectListener implements ApplicationListener<ClientHolder.A
                 map.put("cmdCd",cmd.getCmdCd());
                 map.put("cmdTypeCd",cmd.getCmdTypeCd());
                 map.put("deviceId",cmd.getDeviceId());
-                Message message = new Message("issue_cmd", cmd.getDeviceId(),cmd.getId(),map.toString().getBytes());
+                Message message = new Message(issueTopic, cmd.getDeviceId(),cmd.getId(),map.toString().getBytes());
                 cmdProducer.send(message);
                 log.info("MarketingPhone:向【{}】发送的类型为【{}】指令【{}】入队列...",cmd.getDeviceId(),cmd.getCmdCd(),cmd.getCmdParm());
             }
