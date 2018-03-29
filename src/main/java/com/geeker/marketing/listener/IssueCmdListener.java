@@ -1,8 +1,10 @@
 package com.geeker.marketing.listener;
 
+import com.alibaba.fastjson.JSONObject;
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmd;
 import com.geeker.marketing.enums.CmdEnum;
 import com.geeker.marketing.service.OpDeviceCmdService;
+import com.geeker.marketing.vo.DeviceCmdVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
@@ -48,15 +50,14 @@ public class IssueCmdListener implements ApplicationListener<PublicEvent.IssueCm
                 return;
             }
             log.info("MarketingPhone:下发指令【{}】#【{}】...", cmdId, opDeviceCmd.getDeviceId());
-            Map<String, Object> map = new HashMap<>(6);
-            map.put("cmdId", cmdId);
-            map.put("cmdParm", opDeviceCmd.getCmdParm());
-            map.put("cmdCd", opDeviceCmd.getCmdCd());
-            map.put("cmdTypeCd", opDeviceCmd.getCmdTypeCd());
-            map.put("deviceId", opDeviceCmd.getDeviceId());
-            Message message = new Message(issueTopic, opDeviceCmd.getDeviceId(), opDeviceCmd.getId(), map.toString().getBytes());
+            DeviceCmdVo cmdVo = new DeviceCmdVo();
+            cmdVo.setCmdCd(opDeviceCmd.getCmdCd());
+            cmdVo.setCmdId(cmdId);
+            cmdVo.setCmdParm(opDeviceCmd.getCmdParm());
+            cmdVo.setCmdTypeCd(opDeviceCmd.getCmdTypeCd());
+            Message message = new Message(issueTopic, opDeviceCmd.getDeviceId(), opDeviceCmd.getId(), JSONObject.toJSON(cmdVo).toString().getBytes());
             cmdProducer.send(message);
-            log.info("MarketingPhone:向【{}】发送的类型为【{}】指令【{}】入队列...", opDeviceCmd.getDeviceId(), opDeviceCmd.getCmdCd(), opDeviceCmd.getCmdParm());
+            log.info("MarketingPhone:指令入队列【{}】【{}】【{}】【{}】...",opDeviceCmd.getId(),opDeviceCmd.getDeviceId(),opDeviceCmd.getCmdCd(),opDeviceCmd.getCmdParm());
         } catch (Exception e) {
             e.printStackTrace();
         }

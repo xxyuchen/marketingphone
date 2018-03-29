@@ -10,10 +10,7 @@ import com.geeker.marketing.response.Response;
 import com.geeker.marketing.response.ResponseUtils;
 import com.geeker.marketing.service.OpDeviceCmdService;
 import com.geeker.marketing.utils.FactoryIdUtils;
-import com.geeker.marketing.vo.CustVo;
-import com.geeker.marketing.vo.OpDeviceCmdVo;
-import com.geeker.marketing.vo.PhoneBookVo;
-import com.geeker.marketing.vo.WxLocationVo;
+import com.geeker.marketing.vo.*;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
@@ -73,14 +70,12 @@ public class OpDeviceCmdController {
         map.put("delete", phoneBook.getDelMobiles());
         map.put("update", phoneBook.getMobiles());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
-        System.out.println(map.toString());
-        vo.setCmdParm(map.toString());
+        vo.setCmdParm(JSON.toJSONString(map));
         vo.setDeviceId(phoneBook.getDeviceId());
         vo.setComId(phoneBook.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.CALL.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.call_book.getCode());
         //vo.setDeliverTime(new Date());
-        //vo.setDeliverStatus(CmdEnum.DeliverStatusEnum.DO.getCode());
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }
@@ -122,14 +117,12 @@ public class OpDeviceCmdController {
             return ResponseUtils.error(500, "客户端不在线！");
         }
         log.info("拨打电话指令下发【{}】->【{}】", id, mobile);
-
-        Map<String, Object> map = new HashMap<>(8);
-        map.put("cmdId", id);
-        map.put("cmdParm", mobile);
-        map.put("cmdCd", CmdEnum.CmdCdEnum.call_out.getCode());
-        map.put("cmdTypeCd", CmdEnum.TypeCdEnum.CALL.getCode());
-        map.put("deviceId", deviceId);
-        ChannelFuture channelFuture = NettyUtil.sendMessage(channel, map.toString());
+        DeviceCmdVo cmdVo = new DeviceCmdVo();
+        cmdVo.setCmdCd(CmdEnum.CmdCdEnum.call_out.getCode());
+        cmdVo.setCmdId(id);
+        cmdVo.setCmdParm(mobile);
+        cmdVo.setCmdTypeCd(CmdEnum.TypeCdEnum.CALL.getCode());
+        ChannelFuture channelFuture = NettyUtil.sendMessage(channel, JSON.toJSONString(cmdVo));
         if (channelFuture.isSuccess()) {
             return ResponseUtils.success();
 
@@ -183,17 +176,17 @@ public class OpDeviceCmdController {
         WxLocationVo wxLocationVo = JSON.parseObject(json, WxLocationVo.class);
         //指令入库
         Map<String, Object> map = new HashMap<>(6);
-        if(wxLocationVo.isOpen()){
-            if(wxLocationVo.getLatitude()==null||wxLocationVo.getLongtitude()==null){
+        if (wxLocationVo.isOpen()) {
+            if (wxLocationVo.getLatitude() == null || wxLocationVo.getLongtitude() == null) {
                 throw new Exception("经纬度不呢为空！");
-            }else if(wxLocationVo.getRange()<=0||wxLocationVo.getRange()>=2000){
+            } else if (wxLocationVo.getRange() <= 0 || wxLocationVo.getRange() >= 2000) {
                 throw new Exception("半径暂支持0-2000米！");
             }
-            map.put("latitude",wxLocationVo.getLatitude());
-            map.put("longtitude",wxLocationVo.getLongtitude());
-            map.put("lac",wxLocationVo.getLac());
-            map.put("cid",wxLocationVo.getCid());
-            map.put("range",wxLocationVo.getRange());
+            map.put("latitude", wxLocationVo.getLatitude());
+            map.put("longtitude", wxLocationVo.getLongtitude());
+            map.put("lac", wxLocationVo.getLac());
+            map.put("cid", wxLocationVo.getCid());
+            map.put("range", wxLocationVo.getRange());
         }
         map.put("open", wxLocationVo.isOpen());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
@@ -203,6 +196,95 @@ public class OpDeviceCmdController {
         vo.setComId(wxLocationVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.wx_location.getCode());
+        Response response = opDeviceCmdService.issueCmd(vo);
+        return response;
+    }
+
+    /**
+     * 附件加人
+     *
+     * @param json
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/wxAddRoundFans")
+    @ResponseBody
+    public Response wxAddRoundFans(String json) throws Exception {
+        log.info("附件加人--》【{}】", json);
+        WxLocationVo wxLocationVo = JSON.parseObject(json, WxLocationVo.class);
+        //指令入库
+        Map<String, Object> map = new HashMap<>(6);
+        if (wxLocationVo.getLatitude() == null || wxLocationVo.getLongtitude() == null) {
+            throw new Exception("经纬度不呢为空！");
+        }
+        map.put("latitude", wxLocationVo.getLatitude());
+        map.put("longtitude", wxLocationVo.getLongtitude());
+        map.put("helloMessage", wxLocationVo.getHelloMessage());
+        OpDeviceCmdVo vo = new OpDeviceCmdVo();
+        System.out.println(map.toString());
+        vo.setCmdParm(map.toString());
+        vo.setDeviceId(wxLocationVo.getDeviceId());
+        vo.setComId(wxLocationVo.getComId());
+        vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
+        vo.setCmdCd(CmdEnum.CmdCdEnum.wx_add_round_fans.getCode());
+        Response response = opDeviceCmdService.issueCmd(vo);
+        return response;
+    }
+
+    /**
+     * 自动通过好友请求
+     *
+     * @param json
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/wxNewFriends")
+    @ResponseBody
+    public Response wxNewFriends(String json) throws Exception {
+        log.info("好友自动通过--》【{}】", json);
+        WxNewFriendsVo wxNewFriendsVo = JSON.parseObject(json, WxNewFriendsVo.class);
+        //指令入库
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("open", wxNewFriendsVo.isOpen());
+        OpDeviceCmdVo vo = new OpDeviceCmdVo();
+        System.out.println(map.toString());
+        vo.setCmdParm(map.toString());
+        vo.setDeviceId(wxNewFriendsVo.getDeviceId());
+        vo.setComId(wxNewFriendsVo.getComId());
+        vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
+        vo.setCmdCd(CmdEnum.CmdCdEnum.wx_new_friends.getCode());
+        Response response = opDeviceCmdService.issueCmd(vo);
+        return response;
+    }
+    /**
+     * 运动、朋友圈点赞
+     *
+     * @param json
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/wxLike")
+    @ResponseBody
+    public Response wxLike(String json) throws Exception {
+        log.info("运动、朋友圈点赞--》【{}】", json);
+        WxLikeVo wxLikeVo = JSON.parseObject(json, WxLikeVo.class);
+        //指令入库
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("sum", wxLikeVo.getSum());
+        map.put("type",wxLikeVo.getType());
+        OpDeviceCmdVo vo = new OpDeviceCmdVo();
+        System.out.println(map.toString());
+        vo.setCmdParm(map.toString());
+        vo.setDeviceId(wxLikeVo.getDeviceId());
+        vo.setComId(wxLikeVo.getComId());
+        vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
+        if(wxLikeVo.getType().equals("friends")){
+            vo.setCmdCd(CmdEnum.CmdCdEnum.wx_friends_like.getCode());
+        }else if (wxLikeVo.getType().equals("sports")){
+            vo.setCmdCd(CmdEnum.CmdCdEnum.wx_sports_like.getCode());
+        }else {
+            throw new Exception("只可以再运动圈或朋友圈点赞哟！");
+        }
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }

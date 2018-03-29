@@ -66,7 +66,7 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         opDeviceCmd.setDeliverStatus(status);
         //opDeviceCmd.setReceiveResult(result);
         opDeviceCmd.setDeliverTime(new Date());
-        opDeviceCmdMapper.updateByPrimaryKey(opDeviceCmd);
+        opDeviceCmdMapper.updateByPrimaryKeySelective(opDeviceCmd);
     }
 
     @Override
@@ -95,11 +95,12 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         BeanUtils.copyProperties(vo,opDeviceCmd);
         opDeviceCmd.setCreateTime(new Date());
         opDeviceCmd.setId(id);
+        opDeviceCmd.setDeliverStatus(CmdEnum.DeliverStatusEnum.UNDO.getCode());
         log.info("下发指令入库【{}】",id);
         if(opDeviceCmdMapper.insert(opDeviceCmd)<=0){
             return ResponseUtils.error(500,"操作失败！");
         }
-            Channel channel = clientHolder.getClient(vo.getDeviceId());
+        Channel channel = clientHolder.getClient(vo.getDeviceId());
         if(null == channel){
             log.error("设备【{}】未连接...",vo.getDeviceId());
             return ResponseUtils.error(500,"设备未连接，会在设备连接后下发该指令！");

@@ -49,7 +49,7 @@ public class DeviceConnectListener implements ApplicationListener<PublicEvent.Ad
                 map.put("deviceId",cmd.getDeviceId());
                 Message message = new Message(issueTopic, cmd.getDeviceId(),cmd.getId(),map.toString().getBytes());
                 cmdProducer.send(message);
-                log.info("MarketingPhone:向【{}】发送的类型为【{}】指令【{}】入队列...",cmd.getDeviceId(),cmd.getCmdCd(),cmd.getCmdParm());
+                log.info("MarketingPhone:指令入队列【{}】【{}】【{}】【{}】...",cmd.getId(),cmd.getDeviceId(),cmd.getCmdCd(),cmd.getCmdParm());
             }
         } catch (Exception e) {
             e.printStackTrace();

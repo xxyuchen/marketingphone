@@ -24,5 +24,7 @@ public class WxLocationVo extends CommonVo{
 
     private boolean open = true;
 
+    private String helloMessage;
+
 
 }

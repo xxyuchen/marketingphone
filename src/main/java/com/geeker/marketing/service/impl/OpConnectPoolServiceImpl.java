@@ -54,6 +54,11 @@ public class OpConnectPoolServiceImpl implements OpConnectPoolService {
         return opConnectPoolMapper.updateByExample(opConnectPool,example);
     }
 
+    @Override
+    public int updateById(OpConnectPool opConnectPool) {
+        return opConnectPoolMapper.updateByPrimaryKey(opConnectPool);
+    }
+
     /**
      * 注册连接
      * @param deviceId
@@ -69,9 +74,8 @@ public class OpConnectPoolServiceImpl implements OpConnectPoolService {
             insert(connectPool);
         }else {
             opConnectPool.setStatus(ConnectEnum.ConnectStatusEnum.ONLINE.getCode());
-            update(opConnectPool);
+            updateById(opConnectPool);
         }
-        //查询是否有延迟指令--》》存入消息队列
 
     }
 
@@ -89,7 +93,7 @@ public class OpConnectPoolServiceImpl implements OpConnectPoolService {
             insert(connectPool);
         }else {
             opConnectPool.setStatus(ConnectEnum.ConnectStatusEnum.OFFLINE.getCode());
-            update(opConnectPool);
+            updateById(opConnectPool);
         }
     }
 }

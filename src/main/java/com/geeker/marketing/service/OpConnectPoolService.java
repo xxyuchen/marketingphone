@@ -12,6 +12,8 @@ public interface OpConnectPoolService {
 
     int update(OpConnectPool opConnectPool);
 
+    int updateById(OpConnectPool opConnectPool);
+
     void registerConnect(String clientId);
 
     void cancellation(String deviceId);

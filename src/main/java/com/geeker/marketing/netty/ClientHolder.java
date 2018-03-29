@@ -46,6 +46,7 @@ public class ClientHolder extends ChannelInboundHandlerAdapter {
 
     public void addClient(Channel channel) throws Exception {
         String deviceId = channel.attr(Attributes.DEVICE_ID_ATTR).get();
+        log.info("微营销设备【{}】请求连接",deviceId);
         if (null == microDeviceService.getbyDeviceId(deviceId)) {
             log.info("微营销设备【{}】不存在",deviceId);
             throw new DeviceNotFindException("微营销设备【{"+deviceId+"}】不存在",804);

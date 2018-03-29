@@ -95,18 +95,20 @@ public class RocketConsumer {
                 if (null != channel) {
                     NettyUtil.sendMessage(channel, body).addListener(future -> {
                         Integer status = null;
+                        String result = null;
                         //更新指令状态
                         if (future.isSuccess()) {
                             status = CmdEnum.DeliverStatusEnum.DO.getCode();
                         } else {
+                            log.info("指令下发失败【{}】...",id);
                             status = CmdEnum.DeliverStatusEnum.FAIL.getCode();
+                            result = "指令下发失败";
                         }
-                        log.info("op_device_cmd 指令状态更新【{}】-》【{}】", status, future.cause().getLocalizedMessage());
-                        opDeviceCmdService.updateDeliverStatus(id, status, future.cause().getLocalizedMessage());
+                        log.info("op_device_cmd 指令状态更新【{}】", status);
+                        opDeviceCmdService.updateDeliverStatus(id, status, result);
                     });
                 } else {
                     log.info("客户端不在线【{}】", deviceId);
-                    //return ConsumeConcurrentlyStatus.RECONSUME_LATER;
                 }
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
