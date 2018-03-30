@@ -1,5 +1,6 @@
 package com.geeker.marketing.service.impl;
 
+import com.geeker.marketing.dao.micro.custom.mapper.CustomOpDeviceCmdMapper;
 import com.geeker.marketing.dao.micro.generator.mapper.OpDeviceCmdMapper;
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmd;
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmdExample;
@@ -33,6 +34,8 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
 
     @Resource
     private OpDeviceCmdMapper opDeviceCmdMapper;
+    @Resource
+    private CustomOpDeviceCmdMapper customOpDeviceCmdMapper;
 
     @Resource
     private ApplicationEventPublisher eventPublisher;
@@ -46,12 +49,12 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
      */
     @Override
     public List<OpDeviceCmd> notIssuedCmd(String deviceId) {
-        OpDeviceCmdExample example = new OpDeviceCmdExample();
+        OpDeviceCmd example = new OpDeviceCmd();
         //TODO 过期指令处理....
-        example.createCriteria().andDeviceIdEqualTo(deviceId);
-        example.createCriteria().andDeliverStatusEqualTo(CmdEnum.DeliverStatusEnum.UNDO.getCode());
-        List<OpDeviceCmd> opDeviceCmds = opDeviceCmdMapper.selectByExample(example);
-        return opDeviceCmds;
+        example.setDeliverStatus(CmdEnum.DeliverStatusEnum.UNDO.getCode());
+        example.setDeviceId(deviceId);
+        List<OpDeviceCmd> opDeviceCmds = customOpDeviceCmdMapper.getUnDoCmd(example);
+          return opDeviceCmds;
     }
 
     @Override
