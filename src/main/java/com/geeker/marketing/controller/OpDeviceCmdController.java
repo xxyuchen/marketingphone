@@ -153,7 +153,7 @@ public class OpDeviceCmdController {
         map.put("mobiles", custVo.getMobiles());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
         System.out.println(map.toString());
-        vo.setCmdParm(map.toString());
+        vo.setCmdParm(JSON.toJSONString(map));
         vo.setDeviceId(custVo.getDeviceId());
         vo.setComId(custVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
@@ -190,7 +190,7 @@ public class OpDeviceCmdController {
         }
         map.put("open", wxLocationVo.isOpen());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
-        System.out.println(map.toString());
+        System.out.println(JSON.toJSONString(map));
         vo.setCmdParm(map.toString());
         vo.setDeviceId(wxLocationVo.getDeviceId());
         vo.setComId(wxLocationVo.getComId());
@@ -221,7 +221,7 @@ public class OpDeviceCmdController {
         map.put("longtitude", wxLocationVo.getLongtitude());
         map.put("helloMessage", wxLocationVo.getHelloMessage());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
-        System.out.println(map.toString());
+        System.out.println(JSON.toJSONString(map));
         vo.setCmdParm(map.toString());
         vo.setDeviceId(wxLocationVo.getDeviceId());
         vo.setComId(wxLocationVo.getComId());
@@ -273,8 +273,7 @@ public class OpDeviceCmdController {
         map.put("sum", wxLikeVo.getSum());
         map.put("type",wxLikeVo.getType());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
-        System.out.println(map.toString());
-        vo.setCmdParm(map.toString());
+        vo.setCmdParm(JSON.toJSONString(map));
         vo.setDeviceId(wxLikeVo.getDeviceId());
         vo.setComId(wxLikeVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
@@ -283,7 +282,44 @@ public class OpDeviceCmdController {
         }else if (wxLikeVo.getType().equals("sports")){
             vo.setCmdCd(CmdEnum.CmdCdEnum.wx_sports_like.getCode());
         }else {
-            throw new Exception("只可以再运动圈或朋友圈点赞哟！");
+            throw new Exception("只可以在运动圈或朋友圈点赞哟！");
+        }
+        Response response = opDeviceCmdService.issueCmd(vo);
+        return response;
+    }
+
+    /**
+     * 好友、群、朋友圈消息
+     *
+     * @param json
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/wxSendMsg")
+    @ResponseBody
+    public Response wxSendMsg(String json) throws Exception {
+        log.info("好友、群、朋友圈消息发送--》【{}】", json);
+        WxSendMsgVo wxSendMsgVo = JSON.parseObject(json, WxSendMsgVo.class);
+        if(null!=wxSendMsgVo.getImgUrls()&&wxSendMsgVo.getImgUrls().size()>9){
+            throw new Exception("图片数量超出限制！ ");
+        }
+        //指令入库
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("text", wxSendMsgVo.getText());
+        map.put("imgUrls",wxSendMsgVo.getImgUrls());
+        map.put("vidUrls",wxSendMsgVo.getVidUrls());
+        map.put("channel",wxSendMsgVo.getChannel());
+        OpDeviceCmdVo vo = new OpDeviceCmdVo();
+        vo.setCmdParm(JSON.toJSONString(map));
+        vo.setDeviceId(wxSendMsgVo.getDeviceId());
+        vo.setComId(wxSendMsgVo.getComId());
+        vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
+        if(wxSendMsgVo.getChannel().contains("friends")){
+            vo.setCmdCd(CmdEnum.CmdCdEnum.wx_friends_msg.getCode());
+        }else if (wxSendMsgVo.getChannel().contains("fans")||wxSendMsgVo.getChannel().contains("group")){
+            vo.setCmdCd(CmdEnum.CmdCdEnum.wx_send_msg.getCode());
+        }else {
+            throw new Exception("只可以在好友、群或朋友圈发消息哟！");
         }
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;

@@ -1,7 +1,6 @@
 package com.geeker.marketing.rocketMq;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.geeker.marketing.conf.RocketConf;
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmd;
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceReport;
@@ -10,6 +9,7 @@ import com.geeker.marketing.netty.ClientHolder;
 import com.geeker.marketing.netty.NettyUtil;
 import com.geeker.marketing.service.OpDeviceCmdService;
 import com.geeker.marketing.service.OpDeviceReportService;
+import com.geeker.marketing.vo.ReportCmdVo;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import me.robin.spring.rocketmq.ConsumerConfig;
@@ -142,34 +142,11 @@ public class RocketConsumer {
         consumer.registerMessageListener((List<MessageExt> msgs, ConsumeConcurrentlyContext context) -> {
             MessageExt msg = msgs.get(0);
             try {
-                log.debug("Receive New Messages: {}", msgs.size());
-                JSONObject json = JSON.parseObject(new String(msg.getBody()));
-                if(msg.getTags().equals("")){////主动上报指令
-                    //消息入库
-                    OpDeviceReport opDeviceReport = new OpDeviceReport();
-                    opDeviceReport.setComId(1);
-                    opDeviceReport.setDeviceId(msg.getKeys());
-                    opDeviceReport.setCmdTypeCd(msg.getTags());
-                    opDeviceReport.setCmdCd(json.getString("cmdCd"));
-                    opDeviceReport.setReceiveResult(json.getString("receiveResult"));
-                    opDeviceReport.setReceiveTime(json.getDate("receiveTime"));
-                    opDeviceReport.setReceiveStatus(json.getInteger("receiveStatus"));
-                    opDeviceReport.setCreateTime(new Date());
-                    opDeviceReport.setQueue(msg.getTopic());
-                    opDeviceReport.setMessageId(msg.getMsgId());
-                    opDeviceReport.setQueueTime(json.getDate("queueTime"));
-                    opDeviceReportService.insert(opDeviceReport);
-                }else if(msg.getTags().equals("")){//下发指令执行状况回调
-                    OpDeviceCmd opDeviceCmd = new OpDeviceCmd();
-                    opDeviceCmd.setId(json.getString("id"));
-                    opDeviceCmd.setReceiveResult(json.getString("receiveResult"));
-                    opDeviceCmd.setReceiveStatus(json.getInteger("receiveStatus"));
-                    opDeviceCmd.setReceiveTime(json.getDate("reciveTime"));
-                    opDeviceCmd.setQueue("report_cmd");
-                    opDeviceCmd.setQueueMsgId(msg.getMsgId());
-                    opDeviceCmd.setQueueTime(json.getDate("queueTime"));
-                    opDeviceCmdService.update(opDeviceCmd);
-                }
+                ReportCmdVo vo = JSON.parseObject(new String(msg.getBody()),ReportCmdVo.class);
+                vo.setDeviceId(msg.getKeys());
+                vo.setQueue(msg.getTopic());
+                vo.setMessageId(msg.getMsgId());
+                opDeviceReportService.dealReportCmd(vo);
             } catch (Exception e) {
                 log.error("消息处理异常 [{}:{}]", msg.getTopic(), msg.getMsgId(), e);
                 if (msg.getReconsumeTimes()>=3) {//重复消费3次

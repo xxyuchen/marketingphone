@@ -179,4 +179,38 @@ public class CmdEnum {
             return null;
         }
     }
+
+    /**
+     * 指令类型
+     */
+    public enum CmdStatusEnum {
+        REPORT("report", "主动上标指令"),
+        ISSUE("issue", "下发指令上报");
+
+        private String key;
+        private String value;
+
+        CmdStatusEnum(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static CmdStatusEnum valueOf(Integer code) {
+            CmdStatusEnum[] enums = CmdStatusEnum.values();
+            for (CmdStatusEnum e : enums) {
+                if (e.getKey().equals(code)) {
+                    return e;
+                }
+            }
+            return null;
+        }
+    }
 }
