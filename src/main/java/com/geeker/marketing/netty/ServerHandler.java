@@ -9,6 +9,7 @@ import com.geeker.marketing.service.AuthenticateService;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 @ChannelHandler.Sharable
+@Slf4j
 public class ServerHandler extends CusHeartBeatHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(ServerHandler.class);
 
     public ServerHandler() {
         super(false);
@@ -44,7 +44,7 @@ public class ServerHandler extends CusHeartBeatHandler {
     protected void handleData(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception {
         boolean authenticated = channelHandlerContext.channel().attr(Attributes.AUTHENTICATED_ATTR).get();
         if (!authenticated) {
-            logger.info("接收到未认证的数据请求,连接将被强制关闭");
+            log.info("接收到未认证的数据请求,连接将被强制关闭");
             channelHandlerContext.channel().close();
             return;
         }
@@ -59,7 +59,7 @@ public class ServerHandler extends CusHeartBeatHandler {
                 try {
                     processRequestData(channelHandlerContext, item, clientId, _rspAction);
                 } catch (Throwable e) {
-                    logger.warn("数据处理异常", e);
+                    log.warn("数据处理异常", e);
                 }
             }
         } else {
@@ -70,7 +70,7 @@ public class ServerHandler extends CusHeartBeatHandler {
     private void processRequestData(ChannelHandlerContext channelHandlerContext, JSONObject meta, String clientId, String rspAction) {
         DeviceRspHandler deviceRspHandler = this.deviceRspHandlerMap.get(rspAction);
         if (null == deviceRspHandler) {
-            logger.warn("没有对应类型的处理器:{} {} {}", rspAction, clientId, meta);
+            log.warn("没有对应类型的处理器:{} {} {}", rspAction, clientId, meta);
         } else {
             deviceRspHandler.process(channelHandlerContext.channel(), clientId, meta);
         }

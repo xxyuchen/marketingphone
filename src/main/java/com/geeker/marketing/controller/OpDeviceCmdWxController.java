@@ -1,136 +1,30 @@
 package com.geeker.marketing.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmd;
 import com.geeker.marketing.enums.CmdEnum;
-import com.geeker.marketing.netty.ClientHolder;
-import com.geeker.marketing.netty.NettyUtil;
 import com.geeker.marketing.response.Response;
-import com.geeker.marketing.response.ResponseUtils;
 import com.geeker.marketing.service.OpDeviceCmdService;
-import com.geeker.marketing.utils.FactoryIdUtils;
 import com.geeker.marketing.vo.*;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author TangZhen
- * @Date 2018/3/26 0026 16:16
- * @Description 指令下发
- */
-@Controller
+* @Author TangZhen
+* @Date 2018/4/10 0010 13:28
+* @Description 下发指令--微信业务
+*/
 @Slf4j
-@RequestMapping("/cmd")
-public class OpDeviceCmdController {
-
+@RestController
+@RequestMapping("cmd/wx")
+public class OpDeviceCmdWxController {
     @Resource
     private OpDeviceCmdService opDeviceCmdService;
-
-    @Resource
-    private ClientHolder clientHolder;
-
-    /**
-     * 下发指令
-     *
-     * @param vo
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping("/issueCmd")
-    @ResponseBody
-    public Response issueCmd(OpDeviceCmdVo vo) throws Exception {
-        return opDeviceCmdService.issueCmd(vo);
-    }
-
-    /**
-     * 同步通讯录
-     *
-     * @param json
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping("/synPhoneBook")
-    @ResponseBody
-    public Response synPhoneBook(String json) throws Exception {
-        log.info("同步通讯录指令--》【{}】", json);
-        PhoneBookVo phoneBook = JSON.parseObject(json, PhoneBookVo.class);
-        //指令入库
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("delete", phoneBook.getDelMobiles());
-        map.put("update", phoneBook.getMobiles());
-        OpDeviceCmdVo vo = new OpDeviceCmdVo();
-        vo.setCmdParm(JSON.toJSONString(map));
-        vo.setDeviceId(phoneBook.getDeviceId());
-        vo.setComId(phoneBook.getComId());
-        vo.setCmdTypeCd(CmdEnum.TypeCdEnum.CALL.getCode());
-        vo.setCmdCd(CmdEnum.CmdCdEnum.call_book.getCode());
-        //vo.setDeliverTime(new Date());
-        Response response = opDeviceCmdService.issueCmd(vo);
-        return response;
-    }
-
-    /**
-     * 拨打电话
-     *
-     * @param json
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping("/call")
-    @ResponseBody
-    public Response cmdCall(String json) throws Exception {
-        log.info("拨打电话指令--》【{}】", json);
-        JSONObject data = JSON.parseObject(json);
-        String mobile = data.getString("mobile");
-        if (StringUtils.isEmpty(mobile)) {
-            return ResponseUtils.error(500, "电话号码不能为空！");
-        }
-        String deviceId = data.getString("deviceId");
-        //指令入库
-        OpDeviceCmd vo = new OpDeviceCmd();
-        //生成指令id
-        String id = FactoryIdUtils.createId();
-        vo.setId(id);
-        vo.setCmdParm(mobile);
-        vo.setComId(data.getInteger("comId"));
-        vo.setCmdTypeCd(CmdEnum.TypeCdEnum.CALL.getCode());
-        vo.setCmdCd(CmdEnum.CmdCdEnum.call_out.getCode());
-
-        vo.setDeliverTime(new Date());
-        vo.setDeliverStatus(CmdEnum.DeliverStatusEnum.DO.getCode());
-        if (opDeviceCmdService.insert(vo) <= 0) {
-            return ResponseUtils.error(500, "操作失败！");
-        }
-        Channel channel = clientHolder.getClient(deviceId);
-        if (null == channel) {
-            return ResponseUtils.error(500, "客户端不在线！");
-        }
-        log.info("拨打电话指令下发【{}】->【{}】", id, mobile);
-        DeviceCmdVo cmdVo = new DeviceCmdVo();
-        cmdVo.setCmdCd(CmdEnum.CmdCdEnum.call_out.getCode());
-        cmdVo.setCmdId(id);
-        cmdVo.setCmdParm(mobile);
-        cmdVo.setCmdTypeCd(CmdEnum.TypeCdEnum.CALL.getCode());
-        ChannelFuture channelFuture = NettyUtil.sendMessage(channel, JSON.toJSONString(cmdVo));
-        if (channelFuture.isSuccess()) {
-            return ResponseUtils.success();
-
-        } else {
-            return ResponseUtils.error(500, "指令下发失败！");
-        }
-    }
-
     /**
      * 精准加人
      *
@@ -139,7 +33,6 @@ public class OpDeviceCmdController {
      * @throws Exception
      */
     @RequestMapping("/addAccurate")
-    @ResponseBody
     public Response addAccurate(String json) throws Exception {
         log.info("精准加人--》【{}】", json);
         CustVo custVo = JSON.parseObject(json, CustVo.class);
@@ -170,7 +63,6 @@ public class OpDeviceCmdController {
      * @throws Exception
      */
     @RequestMapping("/wxLocation")
-    @ResponseBody
     public Response wxLocation(String json) throws Exception {
         log.info("定位站街--》【{}】", json);
         WxLocationVo wxLocationVo = JSON.parseObject(json, WxLocationVo.class);
@@ -190,8 +82,7 @@ public class OpDeviceCmdController {
         }
         map.put("open", wxLocationVo.isOpen());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
-        System.out.println(JSON.toJSONString(map));
-        vo.setCmdParm(map.toString());
+        vo.setCmdParm(JSON.toJSONString(map));
         vo.setDeviceId(wxLocationVo.getDeviceId());
         vo.setComId(wxLocationVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
@@ -201,14 +92,13 @@ public class OpDeviceCmdController {
     }
 
     /**
-     * 附件加人
+     * 附近加人
      *
      * @param json
      * @return
      * @throws Exception
      */
     @RequestMapping("/wxAddRoundFans")
-    @ResponseBody
     public Response wxAddRoundFans(String json) throws Exception {
         log.info("附件加人--》【{}】", json);
         WxLocationVo wxLocationVo = JSON.parseObject(json, WxLocationVo.class);
@@ -221,8 +111,7 @@ public class OpDeviceCmdController {
         map.put("longtitude", wxLocationVo.getLongtitude());
         map.put("helloMessage", wxLocationVo.getHelloMessage());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
-        System.out.println(JSON.toJSONString(map));
-        vo.setCmdParm(map.toString());
+        vo.setCmdParm(JSON.toJSONString(map));
         vo.setDeviceId(wxLocationVo.getDeviceId());
         vo.setComId(wxLocationVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
@@ -239,7 +128,6 @@ public class OpDeviceCmdController {
      * @throws Exception
      */
     @RequestMapping("/wxNewFriends")
-    @ResponseBody
     public Response wxNewFriends(String json) throws Exception {
         log.info("好友自动通过--》【{}】", json);
         WxNewFriendsVo wxNewFriendsVo = JSON.parseObject(json, WxNewFriendsVo.class);
@@ -247,8 +135,7 @@ public class OpDeviceCmdController {
         Map<String, Object> map = new HashMap<>(1);
         map.put("open", wxNewFriendsVo.isOpen());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
-        System.out.println(map.toString());
-        vo.setCmdParm(map.toString());
+        vo.setCmdParm(JSON.toJSONString(map));
         vo.setDeviceId(wxNewFriendsVo.getDeviceId());
         vo.setComId(wxNewFriendsVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
@@ -264,7 +151,6 @@ public class OpDeviceCmdController {
      * @throws Exception
      */
     @RequestMapping("/wxLike")
-    @ResponseBody
     public Response wxLike(String json) throws Exception {
         log.info("运动、朋友圈点赞--》【{}】", json);
         WxLikeVo wxLikeVo = JSON.parseObject(json, WxLikeVo.class);
@@ -296,7 +182,6 @@ public class OpDeviceCmdController {
      * @throws Exception
      */
     @RequestMapping("/wxSendMsg")
-    @ResponseBody
     public Response wxSendMsg(String json) throws Exception {
         log.info("好友、群、朋友圈消息发送--》【{}】", json);
         WxSendMsgVo wxSendMsgVo = JSON.parseObject(json, WxSendMsgVo.class);
@@ -325,4 +210,31 @@ public class OpDeviceCmdController {
         return response;
     }
 
+    /**
+     * 自动拉群
+     *
+     * @param json
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/wxCreateGroup")
+    public Response wxCreateGroup(String json) throws Exception {
+        log.info("自动拉群--》【{}】", json);
+        WxCreateGroupVo wxCreateGroupVo = JSON.parseObject(json, WxCreateGroupVo.class);
+        if(null!=wxCreateGroupVo.getWxIds()&&wxCreateGroupVo.getWxIds().size()<=0){
+            throw new Exception("请选择组群好友！");
+        }
+        //指令入库
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("groupName", wxCreateGroupVo.getGroupName());
+        map.put("wxIds",wxCreateGroupVo.getWxIds());
+        OpDeviceCmdVo vo = new OpDeviceCmdVo();
+        vo.setCmdParm(JSON.toJSONString(map));
+        vo.setDeviceId(wxCreateGroupVo.getDeviceId());
+        vo.setComId(wxCreateGroupVo.getComId());
+        vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
+        vo.setCmdCd(CmdEnum.CmdCdEnum.wx_create_group.getCode());
+        Response response = opDeviceCmdService.issueCmd(vo);
+        return response;
+    }
 }

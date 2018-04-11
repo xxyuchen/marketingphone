@@ -134,8 +134,8 @@ public class RocketConsumer {
         }
         ConsumerConfig consumerConfig = rocketConf.getConsumer();
         //consumer.setConsumeMessageBatchMaxSize(1);//设置批量消费，以提升消费吞吐量，默认是1
-        consumer.setConsumeThreadMin(consumerConfig.getMinConsumers());
-        consumer.setConsumeThreadMax(consumerConfig.getMaxConsumers());
+        consumer.setConsumeThreadMin(consumerConfig.getMinConsumers());//16
+        consumer.setConsumeThreadMax(consumerConfig.getMaxConsumers());//32
 
         consumer.subscribe(reportTopic, "*");
 

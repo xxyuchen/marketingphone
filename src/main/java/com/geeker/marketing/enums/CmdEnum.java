@@ -126,6 +126,7 @@ public class CmdEnum {
         sys_open_gps("sys_open_gps", "开启GPS"),
         wx_send_msg("wx_send_msg", "微信好友、群消息"),
         wx_friends_msg("wx_friends_msg", "微信朋友圈消息"),
+        wx_create_group("wx_create_group", "自动拉群"),
         wx_friends_like("wx_friends_like", "朋友圈点赞"),
         wx_sports_like("wx_sports_like", "运动圈点赞"),
         wx_hello_conf("wx_hello_conf", "微信招呼语设置"),
