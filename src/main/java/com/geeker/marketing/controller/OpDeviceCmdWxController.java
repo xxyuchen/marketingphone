@@ -6,6 +6,7 @@ import com.geeker.marketing.response.Response;
 import com.geeker.marketing.service.OpDeviceCmdService;
 import com.geeker.marketing.vo.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +34,7 @@ public class OpDeviceCmdWxController {
      * @throws Exception
      */
     @RequestMapping("/addAccurate")
-    public Response addAccurate(String json) throws Exception {
+    public Response addAccurate(@RequestBody String json) throws Exception {
         log.info("精准加人--》【{}】", json);
         CustVo custVo = JSON.parseObject(json, CustVo.class);
         //指令入库
@@ -51,6 +52,7 @@ public class OpDeviceCmdWxController {
         vo.setComId(custVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.wx_add_fans.getCode());
+        vo.setUserId(custVo.getUserId());
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }
@@ -63,7 +65,7 @@ public class OpDeviceCmdWxController {
      * @throws Exception
      */
     @RequestMapping("/wxLocation")
-    public Response wxLocation(String json) throws Exception {
+    public Response wxLocation(@RequestBody String json) throws Exception {
         log.info("定位站街--》【{}】", json);
         WxLocationVo wxLocationVo = JSON.parseObject(json, WxLocationVo.class);
         //指令入库
@@ -87,6 +89,7 @@ public class OpDeviceCmdWxController {
         vo.setComId(wxLocationVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.wx_location.getCode());
+        vo.setUserId(wxLocationVo.getUserId());
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }
@@ -99,7 +102,7 @@ public class OpDeviceCmdWxController {
      * @throws Exception
      */
     @RequestMapping("/wxAddRoundFans")
-    public Response wxAddRoundFans(String json) throws Exception {
+    public Response wxAddRoundFans(@RequestBody String json) throws Exception {
         log.info("附件加人--》【{}】", json);
         WxLocationVo wxLocationVo = JSON.parseObject(json, WxLocationVo.class);
         //指令入库
@@ -115,6 +118,7 @@ public class OpDeviceCmdWxController {
         vo.setDeviceId(wxLocationVo.getDeviceId());
         vo.setComId(wxLocationVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
+        vo.setUserId(wxLocationVo.getUserId());
         vo.setCmdCd(CmdEnum.CmdCdEnum.wx_add_round_fans.getCode());
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
@@ -128,7 +132,7 @@ public class OpDeviceCmdWxController {
      * @throws Exception
      */
     @RequestMapping("/wxNewFriends")
-    public Response wxNewFriends(String json) throws Exception {
+    public Response wxNewFriends(@RequestBody String json) throws Exception {
         log.info("好友自动通过--》【{}】", json);
         WxNewFriendsVo wxNewFriendsVo = JSON.parseObject(json, WxNewFriendsVo.class);
         //指令入库
@@ -140,6 +144,7 @@ public class OpDeviceCmdWxController {
         vo.setComId(wxNewFriendsVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.wx_new_friends.getCode());
+        vo.setUserId(wxNewFriendsVo.getUserId());
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }
@@ -151,7 +156,7 @@ public class OpDeviceCmdWxController {
      * @throws Exception
      */
     @RequestMapping("/wxLike")
-    public Response wxLike(String json) throws Exception {
+    public Response wxLike(@RequestBody String json) throws Exception {
         log.info("运动、朋友圈点赞--》【{}】", json);
         WxLikeVo wxLikeVo = JSON.parseObject(json, WxLikeVo.class);
         //指令入库
@@ -163,6 +168,7 @@ public class OpDeviceCmdWxController {
         vo.setDeviceId(wxLikeVo.getDeviceId());
         vo.setComId(wxLikeVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
+        vo.setUserId(wxLikeVo.getUserId());
         if(wxLikeVo.getType().equals("friends")){
             vo.setCmdCd(CmdEnum.CmdCdEnum.wx_friends_like.getCode());
         }else if (wxLikeVo.getType().equals("sports")){
@@ -182,7 +188,7 @@ public class OpDeviceCmdWxController {
      * @throws Exception
      */
     @RequestMapping("/wxSendMsg")
-    public Response wxSendMsg(String json) throws Exception {
+    public Response wxSendMsg(@RequestBody String json) throws Exception {
         log.info("好友、群、朋友圈消息发送--》【{}】", json);
         WxSendMsgVo wxSendMsgVo = JSON.parseObject(json, WxSendMsgVo.class);
         if(null!=wxSendMsgVo.getImgUrls()&&wxSendMsgVo.getImgUrls().size()>9){
@@ -199,6 +205,7 @@ public class OpDeviceCmdWxController {
         vo.setDeviceId(wxSendMsgVo.getDeviceId());
         vo.setComId(wxSendMsgVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
+        vo.setUserId(wxSendMsgVo.getUserId());
         if(wxSendMsgVo.getChannel().contains("friends")){
             vo.setCmdCd(CmdEnum.CmdCdEnum.wx_friends_msg.getCode());
         }else if (wxSendMsgVo.getChannel().contains("fans")||wxSendMsgVo.getChannel().contains("group")){
@@ -218,7 +225,7 @@ public class OpDeviceCmdWxController {
      * @throws Exception
      */
     @RequestMapping("/wxCreateGroup")
-    public Response wxCreateGroup(String json) throws Exception {
+    public Response wxCreateGroup(@RequestBody String json) throws Exception {
         log.info("自动拉群--》【{}】", json);
         WxCreateGroupVo wxCreateGroupVo = JSON.parseObject(json, WxCreateGroupVo.class);
         if(null!=wxCreateGroupVo.getWxIds()&&wxCreateGroupVo.getWxIds().size()<=0){
@@ -234,6 +241,7 @@ public class OpDeviceCmdWxController {
         vo.setComId(wxCreateGroupVo.getComId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.WX.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.wx_create_group.getCode());
+        vo.setUserId(wxCreateGroupVo.getUserId());
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }

@@ -15,4 +15,7 @@ public class CommonVo {
 
     @NotNull(message = "组织id不能为空！")
     private Integer comId;
+
+    @NotNull(message = "用户id不能为空！")
+    private Integer userId;
 }

@@ -895,6 +895,66 @@ public class OpDeviceExample {
             return (Criteria) this;
         }
 
+        public Criteria andSysIdIsNull() {
+            addCriterion("sys_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdIsNotNull() {
+            addCriterion("sys_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdEqualTo(Integer value) {
+            addCriterion("sys_id =", value, "sysId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdNotEqualTo(Integer value) {
+            addCriterion("sys_id <>", value, "sysId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdGreaterThan(Integer value) {
+            addCriterion("sys_id >", value, "sysId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("sys_id >=", value, "sysId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdLessThan(Integer value) {
+            addCriterion("sys_id <", value, "sysId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdLessThanOrEqualTo(Integer value) {
+            addCriterion("sys_id <=", value, "sysId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdIn(List<Integer> values) {
+            addCriterion("sys_id in", values, "sysId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdNotIn(List<Integer> values) {
+            addCriterion("sys_id not in", values, "sysId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdBetween(Integer value1, Integer value2) {
+            addCriterion("sys_id between", value1, value2, "sysId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("sys_id not between", value1, value2, "sysId");
+            return (Criteria) this;
+        }
+
         public Criteria andComIdIsNull() {
             addCriterion("com_id is null");
             return (Criteria) this;
@@ -1015,123 +1075,123 @@ public class OpDeviceExample {
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeIsNull() {
-            addCriterion("create_time is null");
+        public Criteria andBoundTimeIsNull() {
+            addCriterion("bound_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeIsNotNull() {
-            addCriterion("create_time is not null");
+        public Criteria andBoundTimeIsNotNull() {
+            addCriterion("bound_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeEqualTo(Date value) {
-            addCriterion("create_time =", value, "createTime");
+        public Criteria andBoundTimeEqualTo(Date value) {
+            addCriterion("bound_time =", value, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeNotEqualTo(Date value) {
-            addCriterion("create_time <>", value, "createTime");
+        public Criteria andBoundTimeNotEqualTo(Date value) {
+            addCriterion("bound_time <>", value, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeGreaterThan(Date value) {
-            addCriterion("create_time >", value, "createTime");
+        public Criteria andBoundTimeGreaterThan(Date value) {
+            addCriterion("bound_time >", value, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("create_time >=", value, "createTime");
+        public Criteria andBoundTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("bound_time >=", value, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeLessThan(Date value) {
-            addCriterion("create_time <", value, "createTime");
+        public Criteria andBoundTimeLessThan(Date value) {
+            addCriterion("bound_time <", value, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeLessThanOrEqualTo(Date value) {
-            addCriterion("create_time <=", value, "createTime");
+        public Criteria andBoundTimeLessThanOrEqualTo(Date value) {
+            addCriterion("bound_time <=", value, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeIn(List<Date> values) {
-            addCriterion("create_time in", values, "createTime");
+        public Criteria andBoundTimeIn(List<Date> values) {
+            addCriterion("bound_time in", values, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeNotIn(List<Date> values) {
-            addCriterion("create_time not in", values, "createTime");
+        public Criteria andBoundTimeNotIn(List<Date> values) {
+            addCriterion("bound_time not in", values, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeBetween(Date value1, Date value2) {
-            addCriterion("create_time between", value1, value2, "createTime");
+        public Criteria andBoundTimeBetween(Date value1, Date value2) {
+            addCriterion("bound_time between", value1, value2, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeNotBetween(Date value1, Date value2) {
-            addCriterion("create_time not between", value1, value2, "createTime");
+        public Criteria andBoundTimeNotBetween(Date value1, Date value2) {
+            addCriterion("bound_time not between", value1, value2, "boundTime");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdIsNull() {
-            addCriterion("create_user_id is null");
+        public Criteria andBoundUserIdIsNull() {
+            addCriterion("bound_user_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdIsNotNull() {
-            addCriterion("create_user_id is not null");
+        public Criteria andBoundUserIdIsNotNull() {
+            addCriterion("bound_user_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdEqualTo(Integer value) {
-            addCriterion("create_user_id =", value, "createUserId");
+        public Criteria andBoundUserIdEqualTo(Integer value) {
+            addCriterion("bound_user_id =", value, "boundUserId");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdNotEqualTo(Integer value) {
-            addCriterion("create_user_id <>", value, "createUserId");
+        public Criteria andBoundUserIdNotEqualTo(Integer value) {
+            addCriterion("bound_user_id <>", value, "boundUserId");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdGreaterThan(Integer value) {
-            addCriterion("create_user_id >", value, "createUserId");
+        public Criteria andBoundUserIdGreaterThan(Integer value) {
+            addCriterion("bound_user_id >", value, "boundUserId");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("create_user_id >=", value, "createUserId");
+        public Criteria andBoundUserIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("bound_user_id >=", value, "boundUserId");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdLessThan(Integer value) {
-            addCriterion("create_user_id <", value, "createUserId");
+        public Criteria andBoundUserIdLessThan(Integer value) {
+            addCriterion("bound_user_id <", value, "boundUserId");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdLessThanOrEqualTo(Integer value) {
-            addCriterion("create_user_id <=", value, "createUserId");
+        public Criteria andBoundUserIdLessThanOrEqualTo(Integer value) {
+            addCriterion("bound_user_id <=", value, "boundUserId");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdIn(List<Integer> values) {
-            addCriterion("create_user_id in", values, "createUserId");
+        public Criteria andBoundUserIdIn(List<Integer> values) {
+            addCriterion("bound_user_id in", values, "boundUserId");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdNotIn(List<Integer> values) {
-            addCriterion("create_user_id not in", values, "createUserId");
+        public Criteria andBoundUserIdNotIn(List<Integer> values) {
+            addCriterion("bound_user_id not in", values, "boundUserId");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdBetween(Integer value1, Integer value2) {
-            addCriterion("create_user_id between", value1, value2, "createUserId");
+        public Criteria andBoundUserIdBetween(Integer value1, Integer value2) {
+            addCriterion("bound_user_id between", value1, value2, "boundUserId");
             return (Criteria) this;
         }
 
-        public Criteria andCreateUserIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("create_user_id not between", value1, value2, "createUserId");
+        public Criteria andBoundUserIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("bound_user_id not between", value1, value2, "boundUserId");
             return (Criteria) this;
         }
 

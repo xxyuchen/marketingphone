@@ -5,6 +5,8 @@ import com.geeker.marketing.response.Response;
 import com.geeker.marketing.vo.OpDeviceCmdVo;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Administrator on 2018/3/22 0022.
@@ -21,4 +23,10 @@ public interface OpDeviceCmdService {
     int insert(OpDeviceCmd opDeviceCmd);
 
     Response issueCmd(OpDeviceCmdVo vo) throws Exception;
+
+    Response removeBound(String json) throws Exception;
+
+    Response boundDevice(String json) throws Exception;
+
+    Response cmdCall(String json) throws ExecutionException, InterruptedException;
 }

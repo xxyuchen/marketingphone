@@ -2,8 +2,6 @@ package com.geeker.marketing.rocketMq;
 
 import com.alibaba.fastjson.JSON;
 import com.geeker.marketing.conf.RocketConf;
-import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmd;
-import com.geeker.marketing.dao.micro.generator.model.OpDeviceReport;
 import com.geeker.marketing.enums.CmdEnum;
 import com.geeker.marketing.netty.ClientHolder;
 import com.geeker.marketing.netty.NettyUtil;
@@ -28,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 
 /**
