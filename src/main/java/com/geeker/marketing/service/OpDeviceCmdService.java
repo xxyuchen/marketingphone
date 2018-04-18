@@ -29,4 +29,5 @@ public interface OpDeviceCmdService {
     Response boundDevice(String json) throws Exception;
 
     Response cmdCall(String json) throws ExecutionException, InterruptedException;
+
 }

@@ -12,6 +12,7 @@ spring:
       topic:
         report-topic: report_cmd
         issue-topic: issue_cmd
+        voice-topic: report_cmd_voice
 
 netty:
   so:

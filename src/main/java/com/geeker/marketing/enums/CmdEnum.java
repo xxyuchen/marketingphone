@@ -148,6 +148,7 @@ public class CmdEnum {
         call_out("call_out", "终端呼出事件"),
         call_in_missed("call_in_missed", "客户呼入未接"),
         call_out_missed("call_out_missed", "终端呼出未接"),
+        call_upLoad_voice("call_upLoad_voice", "上传录音文件"),
         sms_rec_new_msg("sms_rec_new_msg", "接收到新短信信息"),
         sms_send_msg("sms_send_msg", "发送短信"),
         sys_device_info("sys_device_info", "上报硬件参数、设备标示信息"),

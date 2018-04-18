@@ -156,5 +156,17 @@ public class OpDeviceCmdPhoneBookController {
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }
-
+    /**
+     * 上报音频
+     * @param json
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/upLoadVocie")
+    @ResponseBody
+    public Response upLoadVocie(@RequestBody String json) throws Exception {
+        log.info("音频上报--》【{}】", json);
+        opDeviceReportService.upLoadVocie(json);
+        return ResponseUtils.success();
+    }
 }
