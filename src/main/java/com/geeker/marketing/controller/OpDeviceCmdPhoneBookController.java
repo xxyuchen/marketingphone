@@ -65,7 +65,7 @@ public class OpDeviceCmdPhoneBookController {
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.CALL.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.call_book.getCode());
         //vo.setDeliverTime(new Date());
-        OpDeviceReport opDeviceReport = new OpDeviceReport();
+        /*OpDeviceReport opDeviceReport = new OpDeviceReport();
         opDeviceReport.setCmdCd(vo.getCmdCd());
         opDeviceReport.setCmdTypeCd(vo.getCmdTypeCd());
         opDeviceReport.setComId(phoneBook.getComId());
@@ -73,7 +73,7 @@ public class OpDeviceCmdPhoneBookController {
         opDeviceReport.setCreateTime(new Date());
         if (opDeviceReportService.insert(opDeviceReport) <= 0) {
             return ResponseUtils.error(500,"数据异常！");
-        }
+        }*/
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }
@@ -144,7 +144,7 @@ public class OpDeviceCmdPhoneBookController {
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.CALL.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.call_group.getCode());
         //vo.setDeliverTime(new Date());
-        OpDeviceReport opDeviceReport = new OpDeviceReport();
+        /*OpDeviceReport opDeviceReport = new OpDeviceReport();
         opDeviceReport.setCmdCd(vo.getCmdCd());
         opDeviceReport.setCmdTypeCd(vo.getCmdTypeCd());
         opDeviceReport.setComId(groupBookVo.getComId());
@@ -152,7 +152,7 @@ public class OpDeviceCmdPhoneBookController {
         opDeviceReport.setCreateTime(new Date());
         if (opDeviceReportService.insert(opDeviceReport) <= 0) {
             return ResponseUtils.error(500,"数据异常！");
-        }
+        }*/
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }

@@ -20,7 +20,10 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.common.message.Message;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,7 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
 
     @Resource
     private OpDeviceCmdMapper opDeviceCmdMapper;
+
     @Resource
     private CustomOpDeviceCmdMapper customOpDeviceCmdMapper;
 
@@ -50,6 +54,12 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
 
     @Resource
     private ClientHolder clientHolder;
+
+    @Resource(name = "cmdProducer")
+    private DefaultMQProducer cmdProducer;
+
+    @Value("${spring.rocketmq.topic.report-topic}")
+    private String reportTopic;
 
     /**
      * 查找未下发指令
@@ -145,18 +155,13 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         vo.setCmdCd(CmdEnum.CmdCdEnum.sys_remove_bound.getCode());
         vo.setDeliverTime(new Date());
         vo.setUserId((Integer) data.get("userId"));
-        vo.setDeliverStatus(CmdEnum.DeliverStatusEnum.DO.getCode());
-        if (opDeviceCmdMapper.insert(vo) <= 0) {
-            throw new Exception("操作失败！");
-        }
-
-        log.info("解除绑定指令下发【{}】->【{}】", id, deviceId);
         DeviceCmdVo cmdVo = new DeviceCmdVo();
         cmdVo.setCmdCd(CmdEnum.CmdCdEnum.sys_remove_bound.getCode());
         cmdVo.setCmdId(id);
         cmdVo.setCmdParm(null);
         cmdVo.setCmdTypeCd(CmdEnum.TypeCdEnum.SYS.getCode());
-        return directIssueCmd(vo,deviceId,cmdVo);
+
+        return boundCmd(vo,deviceId,cmdVo);
     }
 
     /**
@@ -181,20 +186,19 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         vo.setDeliverTime(new Date());
         vo.setDeliverStatus(CmdEnum.DeliverStatusEnum.DO.getCode());
         vo.setUserId((Integer) data.get("userId"));
-        if (opDeviceCmdMapper.insert(vo) <= 0) {
-            throw new Exception( "操作失败！");
-        }
+
         Map<String,Integer> map = new HashMap<>(3);
         map.put("sysId",1);
         map.put("comId", (Integer) data.get("comId"));
         map.put("userId",(Integer) data.get("userId"));
-        log.info("解除绑定指令下发【{}】->【{}】", id, deviceId);
+        log.info("绑定指令下发【{}】->【{}】", id, deviceId);
         DeviceCmdVo cmdVo = new DeviceCmdVo();
         cmdVo.setCmdCd(CmdEnum.CmdCdEnum.sys_bound.getCode());
         cmdVo.setCmdId(id);
         cmdVo.setCmdParm(JSON.toJSONString(map));
         cmdVo.setCmdTypeCd(CmdEnum.TypeCdEnum.SYS.getCode());
-        return directIssueCmd(vo,deviceId,cmdVo);
+
+        return boundCmd(vo,deviceId,cmdVo);
     }
 
     /**
@@ -252,7 +256,6 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         if (opDeviceCmdMapper.insert(vo) <= 0) {
             return ResponseUtils.error(500, "操作失败！");
         }
-
         ChannelFuture channelFuture = NettyUtil.sendMessage(channel, JSON.toJSONString(cmdVo)).addListener(future -> {
         });
         channelFuture.get();
@@ -265,5 +268,31 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
             opDeviceCmdMapper.updateByPrimaryKeySelective(cmd);
             return ResponseUtils.error(500, "指令下发失败！");
         }
+    }
+
+    /**
+     * 绑定业务
+     * @param vo
+     * @param deviceId
+     * @return
+     */
+    private Response boundCmd(OpDeviceCmd vo,String deviceId,DeviceCmdVo cmdVo) throws ExecutionException, InterruptedException {
+        Channel channel = clientHolder.getClient(deviceId);
+        if(null == channel){
+            log.info("设备未连接！");
+            vo.setDeliverStatus(CmdEnum.DeliverStatusEnum.UNDO.getCode());
+        }else {
+            vo.setDeliverStatus(CmdEnum.DeliverStatusEnum.DO.getCode());
+            ChannelFuture channelFuture = NettyUtil.sendMessage(channel, JSON.toJSONString(cmdVo)).addListener(future -> {
+            });
+            channelFuture.get();
+            if (!channelFuture.isSuccess()) {
+                vo.setDeliverStatus(CmdEnum.DeliverStatusEnum.FAIL.getCode());
+            }
+        }
+        if (opDeviceCmdMapper.insert(vo) <= 0) {
+            return ResponseUtils.error(500, "操作失败！");
+        }
+        return ResponseUtils.success();
     }
 }

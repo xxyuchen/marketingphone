@@ -16,4 +16,6 @@ public interface OpDeviceReportService {
     void dealReportCmd(ReportCmdVo vo);
 
     void upLoadVocie(String json) throws InterruptedException, RemotingException, MQClientException, MQBrokerException;
+
+    void loginGeeker(String json);
 }

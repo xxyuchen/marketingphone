@@ -1,7 +1,9 @@
 package com.geeker.marketing.controller;
 
 import com.geeker.marketing.response.Response;
+import com.geeker.marketing.response.ResponseUtils;
 import com.geeker.marketing.service.OpDeviceCmdService;
+import com.geeker.marketing.service.OpDeviceReportService;
 import com.geeker.marketing.vo.OpDeviceCmdVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +24,9 @@ import javax.annotation.Resource;
 public class OpDeviceCmdSysController {
     @Resource
     private OpDeviceCmdService opDeviceCmdService;
+
+    @Resource
+    private OpDeviceReportService opDeviceReportService;
 
 
     /**
@@ -62,6 +67,20 @@ public class OpDeviceCmdSysController {
     public Response removeBound(@RequestBody String json) throws Exception {
         log.info("解除绑定指令下发--》【{}】", json);
         return opDeviceCmdService.removeBound(json);
+    }
+
+    /**
+     * 登录指令
+     * @param json
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/loginGeeker")
+    @ResponseBody
+    public Response loginGeeker(@RequestBody String json) throws Exception {
+        log.info("登录指令指令上报--》【{}】", json);
+        opDeviceReportService.loginGeeker(json);
+        return ResponseUtils.success();
     }
 
 }

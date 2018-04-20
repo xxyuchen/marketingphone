@@ -33,7 +33,7 @@ public class ControllerExceptionHandler {
             return ResponseUtils.error(500, bindingResult.getAllErrors().get(0).getDefaultMessage());
         } else {
             log.error("未知错误", throwable);
-            String errorMsg = throwable.getMessage().length() > 100 ? "系统故障！" : throwable.getMessage();
+            String errorMsg = null == throwable.getMessage() || throwable.getMessage().length() > 100 ? "系统故障！" : throwable.getMessage();
             return ResponseUtils.error(500, errorMsg);
         }
     }

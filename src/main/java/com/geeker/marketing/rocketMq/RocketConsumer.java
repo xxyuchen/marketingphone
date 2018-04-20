@@ -63,11 +63,10 @@ public class RocketConsumer {
     /**
      * 初始化rocketmq消息监听方式的消费者
      */
-    @Bean(destroyMethod = "shutdown")
+    @Bean(destroyMethod = "shutdown", name = "cmdConsumer")
     @Lazy(false)
-    @ConditionalOnMissingBean(value = MQPushConsumer.class, name = "cmdConsumer")
     public MQPushConsumer cmdConsumer() throws MQClientException {
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(rocketConf.getConsumer().getGroup(applicationName) + "_" + activeProfiles);
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("consumer_group_cmd");
         consumer.setNamesrvAddr(rocketConf.getNamesrvAddr());
         consumer.setMessageModel(rocketConf.getConsumer().getMessageModel());
         if (StringUtils.isNotBlank(rocketConf.getConsumer().getInstanceName())) {
@@ -119,11 +118,10 @@ public class RocketConsumer {
     /**
      * 初始化rocketmq消息监听方式的消费者(上报消息处理)
      */
-    @Bean(destroyMethod = "shutdown")
+    @Bean(destroyMethod = "shutdown", name = "reporstConsumer")
     @Lazy(false)
-    @ConditionalOnMissingBean(value = MQPushConsumer.class, name = "reporstConsumer")
     public MQPushConsumer reporstConsumer() throws MQClientException {
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(rocketConf.getConsumer().getGroup(applicationName) + "_" + activeProfiles);
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("consumer_group_report");
         consumer.setNamesrvAddr(rocketConf.getNamesrvAddr());
         consumer.setMessageModel(rocketConf.getConsumer().getMessageModel());
         if (StringUtils.isNotBlank(rocketConf.getConsumer().getInstanceName())) {

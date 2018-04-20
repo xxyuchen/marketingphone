@@ -34,8 +34,10 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * Created by Administrator on 2018/3/26 0026.
- */
+* @Author TangZhen
+* @Date 2018/4/19 0019 16:00
+* @Description  上报指令业务
+*/
 @Service
 @Slf4j
 public class OpDeviceReportServiceImpl implements OpDeviceReportService {
@@ -58,6 +60,9 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
     @Value("${spring.rocketmq.topic.voice-topic}")
     private String voiceTopic;
 
+    @Value("${spring.rocketmq.topic.report-topic}")
+    private String reportTopic;
+
     @Override
     public int insert(OpDeviceReport opDeviceReport) {
         return opDeviceReportMapper.insert(opDeviceReport);
@@ -76,7 +81,7 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
                     opDeviceReport.setCmdCd(vo.getCmdCd());
                     opDeviceReport.setReceiveResult(vo.getData());
                     opDeviceReport.setReceiveTime(vo.getFinish());
-                    opDeviceReport.setReceiveStatus(vo.getCode()==200?1:0);
+                    opDeviceReport.setReceiveStatus(vo.getCode()!=null&&vo.getCode()==200?1:0);
                     opDeviceReport.setCreateTime(new Date());
                     opDeviceReport.setQueue(vo.getQueue());
                     opDeviceReport.setMessageId(vo.getMessageId());
@@ -88,7 +93,7 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
                     OpDeviceCmd opDeviceCmd = new OpDeviceCmd();
                     opDeviceCmd.setId(vo.getCmdId());
                     opDeviceCmd.setReceiveResult(vo.getData());
-                    opDeviceCmd.setReceiveStatus(vo.getCode()==200?1:0);
+                    opDeviceCmd.setReceiveStatus(vo.getCode()!=null&&vo.getCode()==200?1:0);
                     opDeviceCmd.setReceiveTime(vo.getFinish());
                     opDeviceCmd.setQueue(vo.getQueue());
                     opDeviceCmd.setQueueMsgId(vo.getMessageId());
@@ -116,7 +121,18 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
                 wxEventMapper.insert(wxEvent);
             }
         }catch (Exception e){
-            log.info("数据异常！",e.getMessage());
+            log.info("数据异常！",e);
+            e.printStackTrace();
+        }
+    }
+
+    public void reportToQueue(ReportCmdVo vo){
+        log.info("ReportCmd:上报消息入队列==》【{}】：【{}】：【{}】",vo.getRspAction(),vo.getCmdCd(),vo.getData());
+        Message reportMessage = new Message(reportTopic, vo.getRspAction(),vo.getDeviceId(),JSONObject.toJSON(vo).toString().getBytes());
+        try {
+            cmdProducer.send(reportMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -126,25 +142,36 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
             log.info("上报音频指令为空！！！");
             return;
         }
-        Date date = new Date();
         JSONObject data = JSON.parseObject(json);
         String deviceId = data.getString("deviceId");
         String url = data.getString("parm");
         //入队列
         Message message = new Message(voiceTopic, deviceId,url.getBytes());
         cmdProducer.send(message);
-        OpDeviceReport opDeviceReport = new OpDeviceReport();
-        opDeviceReport.setComId(data.getInteger("comId"));
-        opDeviceReport.setDeviceId(deviceId);
-        opDeviceReport.setCmdTypeCd(CmdEnum.TypeCdEnum.CALL.getCode());
-        opDeviceReport.setCmdCd(CmdEnum.CmdCdEnum.call_upLoad_voice.getCode());
-        opDeviceReport.setReceiveResult(url);
-        opDeviceReport.setReceiveTime(date);
-        opDeviceReport.setReceiveStatus(1);
-        opDeviceReport.setCreateTime(date);
-        opDeviceReport.setQueue(voiceTopic);
-        opDeviceReport.setMessageId(message.getBuyerId());
-        opDeviceReport.setQueueTime(date);
-        opDeviceReportMapper.insert(opDeviceReport);
+    }
+
+    /**
+     * 登录数聚客指令上报
+     * @param json
+     */
+    @Override
+    public void loginGeeker(String json) {
+        if(StringUtils.isEmpty(json)){
+            log.info("登录指令为空！！！");
+            return;
+        }
+        JSONObject data = JSON.parseObject(json);
+        String deviceId = data.getString("deviceId");
+
+        ReportCmdVo vo = new ReportCmdVo();
+        vo.setRspAction(CmdEnum.CmdStatusEnum.REPORT.getKey());
+        vo.setCmdCd(CmdEnum.CmdCdEnum.sys_login_geeker.getCode());
+        vo.setCmdTypeCd(CmdEnum.TypeCdEnum.SYS.getCode());
+        vo.setComId(data.getInteger("comId"));
+        vo.setCode(200);
+        vo.setQueueTime(new Date());
+        vo.setDeviceId(deviceId);
+        //丢入队列(存储指令)
+        reportToQueue(vo);
     }
 }
