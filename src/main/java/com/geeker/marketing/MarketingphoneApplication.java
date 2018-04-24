@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 @RestController
 @SpringBootApplication
 @Slf4j
+/*@EnableDiscoveryClient*/
 public class MarketingphoneApplication {
 
     @Resource

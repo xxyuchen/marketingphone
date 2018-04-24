@@ -86,10 +86,10 @@ public class ServerHandler extends CusHeartBeatHandler {
     @Override
     protected void handleAuth(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception {
         JSONObject meta = JSON.parseObject(new String(read(byteBuf, 5), Charset.forName("utf-8")));
-        String ticket = meta.getString("ticket");
-        String serial = meta.getString("serial");
-        if (authenticateService.authTicket(serial, ticket)) {
-            channelHandlerContext.channel().attr(Attributes.DEVICE_ID_ATTR).set(serial);
+        String ticket = meta.getString("requestCode");
+        String deviceId = meta.getString("serial");
+        if (authenticateService.authTicket(deviceId, ticket)) {
+            channelHandlerContext.channel().attr(Attributes.DEVICE_ID_ATTR).set(deviceId);
             channelHandlerContext.channel().attr(Attributes.AUTHENTICATED_ATTR).set(true);
             sendAuth(channelHandlerContext, "success", null);
             clientHolder.addClient(channelHandlerContext.channel());

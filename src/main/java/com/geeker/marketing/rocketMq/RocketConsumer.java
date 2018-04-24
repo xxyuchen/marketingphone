@@ -48,11 +48,8 @@ public class RocketConsumer {
     @Resource
     private ClientHolder clientHolder;
 
-    @Value("${spring.application.name}")
-    private String applicationName;
-
-    @Value("${spring.profiles.active:default}")
-    private String activeProfiles;
+    @Value("${env}")
+    private String env;
 
     @Value("${spring.rocketmq.topic.report-topic}")
     private String reportTopic;
@@ -66,7 +63,7 @@ public class RocketConsumer {
     @Bean(destroyMethod = "shutdown", name = "cmdConsumer")
     @Lazy(false)
     public MQPushConsumer cmdConsumer() throws MQClientException {
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("consumer_group_cmd");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(env+"_consumer_group_cmd");
         consumer.setNamesrvAddr(rocketConf.getNamesrvAddr());
         consumer.setMessageModel(rocketConf.getConsumer().getMessageModel());
         if (StringUtils.isNotBlank(rocketConf.getConsumer().getInstanceName())) {
@@ -121,7 +118,7 @@ public class RocketConsumer {
     @Bean(destroyMethod = "shutdown", name = "reporstConsumer")
     @Lazy(false)
     public MQPushConsumer reporstConsumer() throws MQClientException {
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("consumer_group_report");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(env+"_consumer_group_report");
         consumer.setNamesrvAddr(rocketConf.getNamesrvAddr());
         consumer.setMessageModel(rocketConf.getConsumer().getMessageModel());
         if (StringUtils.isNotBlank(rocketConf.getConsumer().getInstanceName())) {

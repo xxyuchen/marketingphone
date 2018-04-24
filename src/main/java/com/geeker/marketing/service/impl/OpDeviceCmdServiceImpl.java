@@ -187,10 +187,11 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         vo.setDeliverStatus(CmdEnum.DeliverStatusEnum.DO.getCode());
         vo.setUserId((Integer) data.get("userId"));
 
-        Map<String,Integer> map = new HashMap<>(3);
+        Map<String,Object> map = new HashMap<>(3);
         map.put("sysId",1);
-        map.put("comId", (Integer) data.get("comId"));
-        map.put("userId",(Integer) data.get("userId"));
+        map.put("comId", data.get("comId"));
+        map.put("userId",data.get("userId"));
+        map.put("userName",data.get("userName"));
         log.info("绑定指令下发【{}】->【{}】", id, deviceId);
         DeviceCmdVo cmdVo = new DeviceCmdVo();
         cmdVo.setCmdCd(CmdEnum.CmdCdEnum.sys_bound.getCode());

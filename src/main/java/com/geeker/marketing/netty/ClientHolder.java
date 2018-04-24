@@ -1,8 +1,9 @@
 package com.geeker.marketing.netty;
 
+import com.geeker.marketing.dao.micro.generator.model.OpDevice;
 import com.geeker.marketing.listener.PublicEvent;
-import com.geeker.marketing.service.MicroDeviceService;
 import com.geeker.marketing.service.OpConnectPoolService;
+import com.geeker.marketing.service.OpDeviceService;
 import com.geeker.marketing.utils.DeviceNotFindException;
 import com.geeker.marketing.vo.DeviceVO;
 import io.netty.channel.Channel;
@@ -39,7 +40,7 @@ public class ClientHolder extends ChannelInboundHandlerAdapter {
     private OpConnectPoolService opConnectPoolService;
 
     @Resource
-    private MicroDeviceService microDeviceService;
+    private OpDeviceService opDeviceService;
 
     @Resource
     private ApplicationEventPublisher eventPublisher;
@@ -47,7 +48,7 @@ public class ClientHolder extends ChannelInboundHandlerAdapter {
     public void addClient(Channel channel) throws Exception {
         String deviceId = channel.attr(Attributes.DEVICE_ID_ATTR).get();
         log.info("微营销设备【{}】请求连接",deviceId);
-        if (null == microDeviceService.getbyDeviceId(deviceId)) {
+        if (null == opDeviceService.selectById(deviceId)) {
             log.info("微营销设备【{}】不存在",deviceId);
             throw new DeviceNotFindException("微营销设备【{"+deviceId+"}】不存在",804);
         }

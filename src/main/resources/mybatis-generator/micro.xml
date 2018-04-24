@@ -108,6 +108,10 @@
             <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>
         </table>
 
+        <table tableName="op_device_register">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+
         <!--<table tableName="micro_task_log">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="status" javaType="Integer" jdbcType="TINYINT"></columnOverride>

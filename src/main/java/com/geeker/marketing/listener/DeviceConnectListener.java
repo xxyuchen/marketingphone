@@ -1,5 +1,6 @@
 package com.geeker.marketing.listener;
 
+import com.alibaba.fastjson.JSONObject;
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceCmd;
 import com.geeker.marketing.netty.ClientHolder;
 import com.geeker.marketing.service.OpDeviceCmdService;
@@ -48,7 +49,7 @@ public class DeviceConnectListener implements ApplicationListener<PublicEvent.Ad
                 map.put("cmdTypeCd",cmd.getCmdTypeCd());
                 map.put("deviceId",cmd.getDeviceId());
                 map.put("userId",cmd.getUserId());
-                Message message = new Message(issueTopic, cmd.getDeviceId(),cmd.getId(),map.toString().getBytes());
+                Message message = new Message(issueTopic, cmd.getDeviceId(),cmd.getId(), JSONObject.toJSONString(map).getBytes());
                 cmdProducer.send(message);
                 log.info("MarketingPhone:指令入队列【{}】【{}】【{}】【{}】...",cmd.getId(),cmd.getDeviceId(),cmd.getCmdCd(),cmd.getCmdParm());
             }

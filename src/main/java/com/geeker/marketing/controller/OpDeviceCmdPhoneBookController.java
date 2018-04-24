@@ -49,7 +49,7 @@ public class OpDeviceCmdPhoneBookController {
      */
     @RequestMapping("/phoneBook")
     @ResponseBody
-    public Response phoneBook(@RequestBody String json) throws Exception {
+    public Response phoneBook(String json) throws Exception {
         log.info("同步通讯录指令--》【{}】", json);
         PhoneBookVo phoneBook = JSON.parseObject(json, PhoneBookVo.class);
         //指令入库

@@ -1075,6 +1075,66 @@ public class OpDeviceExample {
             return (Criteria) this;
         }
 
+        public Criteria andCreateTimeIsNull() {
+            addCriterion("create_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeIsNotNull() {
+            addCriterion("create_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeEqualTo(Date value) {
+            addCriterion("create_time =", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeNotEqualTo(Date value) {
+            addCriterion("create_time <>", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeGreaterThan(Date value) {
+            addCriterion("create_time >", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("create_time >=", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeLessThan(Date value) {
+            addCriterion("create_time <", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeLessThanOrEqualTo(Date value) {
+            addCriterion("create_time <=", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeIn(List<Date> values) {
+            addCriterion("create_time in", values, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeNotIn(List<Date> values) {
+            addCriterion("create_time not in", values, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeBetween(Date value1, Date value2) {
+            addCriterion("create_time between", value1, value2, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeNotBetween(Date value1, Date value2) {
+            addCriterion("create_time not between", value1, value2, "createTime");
+            return (Criteria) this;
+        }
+
         public Criteria andBoundTimeIsNull() {
             addCriterion("bound_time is null");
             return (Criteria) this;
@@ -1192,6 +1252,76 @@ public class OpDeviceExample {
 
         public Criteria andBoundUserIdNotBetween(Integer value1, Integer value2) {
             addCriterion("bound_user_id not between", value1, value2, "boundUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameIsNull() {
+            addCriterion("bound_user_login_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameIsNotNull() {
+            addCriterion("bound_user_login_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameEqualTo(String value) {
+            addCriterion("bound_user_login_name =", value, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameNotEqualTo(String value) {
+            addCriterion("bound_user_login_name <>", value, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameGreaterThan(String value) {
+            addCriterion("bound_user_login_name >", value, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameGreaterThanOrEqualTo(String value) {
+            addCriterion("bound_user_login_name >=", value, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameLessThan(String value) {
+            addCriterion("bound_user_login_name <", value, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameLessThanOrEqualTo(String value) {
+            addCriterion("bound_user_login_name <=", value, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameLike(String value) {
+            addCriterion("bound_user_login_name like", value, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameNotLike(String value) {
+            addCriterion("bound_user_login_name not like", value, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameIn(List<String> values) {
+            addCriterion("bound_user_login_name in", values, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameNotIn(List<String> values) {
+            addCriterion("bound_user_login_name not in", values, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameBetween(String value1, String value2) {
+            addCriterion("bound_user_login_name between", value1, value2, "boundUserLoginName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBoundUserLoginNameNotBetween(String value1, String value2) {
+            addCriterion("bound_user_login_name not between", value1, value2, "boundUserLoginName");
             return (Criteria) this;
         }
 
