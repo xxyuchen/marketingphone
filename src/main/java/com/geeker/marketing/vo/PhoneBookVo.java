@@ -2,6 +2,7 @@ package com.geeker.marketing.vo;
 
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,4 +14,6 @@ public class PhoneBookVo extends CommonVo{
     private List<PhoneVo> mobiles;
 
     private List<String> delMobiles;
+
+    private Date createTime;
 }

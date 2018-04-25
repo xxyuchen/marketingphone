@@ -49,14 +49,14 @@ public class OpDeviceCmdPhoneBookController {
      */
     @RequestMapping("/phoneBook")
     @ResponseBody
-    public Response phoneBook(String json) throws Exception {
+    public Response phoneBook(@RequestBody String json) throws Exception {
         log.info("同步通讯录指令--》【{}】", json);
         PhoneBookVo phoneBook = JSON.parseObject(json, PhoneBookVo.class);
         //指令入库
         Map<String, Object> map = new HashMap<>(3);
         map.put("delete", phoneBook.getDelMobiles());
         map.put("update", phoneBook.getMobiles());
-        map.put("dateTime", new Date());
+        map.put("dateTime", phoneBook.getCreateTime());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
         vo.setCmdParm(JSON.toJSONString(map));
         vo.setDeviceId(phoneBook.getDeviceId());
@@ -135,7 +135,7 @@ public class OpDeviceCmdPhoneBookController {
         Map<String, Object> map = new HashMap<>(3);
         map.put("delete", groupBookVo.getDelGroups());
         map.put("update", groupBookVo.getGroups());
-        map.put("dateTime", new Date());
+        map.put("dateTime", groupBookVo.getCreateTime());
         OpDeviceCmdVo vo = new OpDeviceCmdVo();
         vo.setCmdParm(JSON.toJSONString(map));
         vo.setDeviceId(groupBookVo.getDeviceId());
