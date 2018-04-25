@@ -191,6 +191,7 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         map.put("sysId",1);
         map.put("comId", data.get("comId"));
         map.put("userId",data.get("userId"));
+        map.put("userLoginName",data.get("userLoginName"));
         map.put("userName",data.get("userName"));
         log.info("绑定指令下发【{}】->【{}】", id, deviceId);
         DeviceCmdVo cmdVo = new DeviceCmdVo();
