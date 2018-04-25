@@ -1,16 +1,13 @@
 package com.geeker.marketing.service.impl;
 
 import com.geeker.marketing.dao.micro.generator.mapper.OpDeviceRegisterMapper;
-import com.geeker.marketing.dao.micro.generator.model.OpDevice;
+import com.geeker.marketing.dao.micro.generator.model.OpDeviceRegister;
 import com.geeker.marketing.dao.micro.generator.model.OpDeviceRegisterExample;
 import com.geeker.marketing.service.AuthenticateService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 /**
  * Created by Lubin.Xuan on 2018-03-28.
@@ -34,6 +31,7 @@ public class AuthenticateServiceImpl implements AuthenticateService {
         OpDeviceRegisterExample example = new OpDeviceRegisterExample();
         example.createCriteria().andDeviceIdEqualTo(deviceId);
         example.createCriteria().andRegisterCodeEqualTo(ticket);
-        return null != opDeviceRegisterMapper.selectByExample(example);
+        List<OpDeviceRegister> opDeviceRegisters = opDeviceRegisterMapper.selectByExample(example);
+        return null != opDeviceRegisters&&opDeviceRegisters.size()>0;
     }
 }
