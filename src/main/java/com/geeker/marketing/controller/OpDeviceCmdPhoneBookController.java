@@ -64,16 +64,6 @@ public class OpDeviceCmdPhoneBookController {
         vo.setUserId(phoneBook.getUserId());
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.CALL.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.call_book.getCode());
-        //vo.setDeliverTime(new Date());
-        /*OpDeviceReport opDeviceReport = new OpDeviceReport();
-        opDeviceReport.setCmdCd(vo.getCmdCd());
-        opDeviceReport.setCmdTypeCd(vo.getCmdTypeCd());
-        opDeviceReport.setComId(phoneBook.getComId());
-        opDeviceReport.setDeviceId(phoneBook.getDeviceId());
-        opDeviceReport.setCreateTime(new Date());
-        if (opDeviceReportService.insert(opDeviceReport) <= 0) {
-            return ResponseUtils.error(500,"数据异常！");
-        }*/
         Response response = opDeviceCmdService.issueCmd(vo);
         return response;
     }

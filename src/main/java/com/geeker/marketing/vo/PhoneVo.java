@@ -17,4 +17,6 @@ public class PhoneVo {
 
     @NotNull(message = "通信号码不能为空！")
     private String phone;
+
+    private String sex;
 }
