@@ -2,7 +2,6 @@ package com.geeker.marketing.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.geeker.marketing.dao.micro.custom.mapper.CustomOpDeviceCmdMapper;
 import com.geeker.marketing.dao.micro.generator.mapper.OpDeviceCmdMapper;
 import com.geeker.marketing.dao.micro.generator.mapper.OpDeviceReportMapper;
 import com.geeker.marketing.dao.micro.generator.mapper.WxEventMapper;
@@ -16,7 +15,6 @@ import com.geeker.marketing.service.OpDeviceReportService;
 import com.geeker.marketing.vo.ReportCmdVo;
 import com.geeker.marketing.vo.WxEventVo;
 import com.geeker.marketing.vo.WxMsgVo;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.exception.MQBrokerException;
@@ -27,17 +25,15 @@ import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
-* @Author TangZhen
-* @Date 2018/4/19 0019 16:00
-* @Description  上报指令业务
-*/
+ * @Author TangZhen
+ * @Date 2018/4/19 0019 16:00
+ * @Description 上报指令业务
+ */
 @Service
 @Slf4j
 public class OpDeviceReportServiceImpl implements OpDeviceReportService {
@@ -71,9 +67,9 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
     @Override
     public void dealReportCmd(ReportCmdVo vo) {
         try {
-            switch (vo.getRspAction()){
+            switch (vo.getRspAction()) {
                 case "report":
-                    log.info("此消息为主动上报消息【{}】",vo.getData());
+                    log.info("此消息为主动上报消息【{}】", vo.getData());
                     OpDeviceReport opDeviceReport = new OpDeviceReport();
                     opDeviceReport.setComId(vo.getComId());
                     opDeviceReport.setDeviceId(vo.getDeviceId());
@@ -81,19 +77,19 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
                     opDeviceReport.setCmdCd(vo.getCmdCd());
                     opDeviceReport.setReceiveResult(vo.getData());
                     opDeviceReport.setReceiveTime(vo.getFinish());
-                    opDeviceReport.setReceiveStatus(vo.getCode()!=null&&vo.getCode()==200?1:0);
+                    opDeviceReport.setReceiveStatus(vo.getCode() != null && vo.getCode() == 200 ? 1 : 0);
                     opDeviceReport.setCreateTime(new Date());
                     opDeviceReport.setQueue(vo.getQueue());
                     opDeviceReport.setMessageId(vo.getMessageId());
                     opDeviceReport.setQueueTime(vo.getQueueTime());
                     opDeviceReportMapper.insert(opDeviceReport);
                     break;
-                case "issue" :
-                    log.info("此消息为下发指令执行消息【{}】【{}】",vo.getCmdCd(),vo.getData());
+                case "issue":
+                    log.info("此消息为下发指令执行消息【{}】【{}】", vo.getCmdCd(), vo.getData());
                     OpDeviceCmd opDeviceCmd = new OpDeviceCmd();
                     opDeviceCmd.setId(vo.getCmdId());
                     opDeviceCmd.setReceiveResult(vo.getData());
-                    opDeviceCmd.setReceiveStatus(vo.getCode()!=null&&vo.getCode()==200?1:0);
+                    opDeviceCmd.setReceiveStatus(vo.getCode() != null && vo.getCode() == 200 ? 1 : 0);
                     opDeviceCmd.setReceiveTime(vo.getFinish());
                     opDeviceCmd.setQueue(vo.getQueue());
                     opDeviceCmd.setQueueMsgId(vo.getMessageId());
@@ -101,34 +97,36 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
                     opDeviceCmdMapper.updateByPrimaryKey(opDeviceCmd);
                     break;
                 default:
-                    log.info("ReportCmd:未能识别消息类型【{}】",vo.getRspAction());
+                    log.info("ReportCmd:未能识别消息类型【{}】", vo.getRspAction());
             }
-            if(vo.getCmdCd().equals("wx_send_msg")){
-                log.info("微信信息【{}】",vo.getData());
-                WxMsgVo wxMsgVo = JSONObject.parseObject(vo.getData(),WxMsgVo.class);
-                WxMsg wxMsg = new WxMsg();
-                BeanUtils.copyProperties(wxMsgVo,wxMsg);
-                wxMsg.setCreateTime(new Date());
-                wxMsg.setComId(vo.getComId());
-                wxMsg.setComId(vo.getComId());
-                wxMsgMapper.insert(wxMsg);
-            }else if("wx_add_friend,wx_send_visiting_card,wx_delete".contains(vo.getCmdCd())){
-                log.info("微信事件信息【{}】",vo.getData());
-                WxEventVo wxEventVo = JSONObject.parseObject(vo.getData(),WxEventVo.class);
-                WxEvent wxEvent = new WxEvent();
-                BeanUtils.copyProperties(wxEventVo,wxEvent);
-                wxEvent.setCreateTime(new Date());
-                wxEventMapper.insert(wxEvent);
+            if(null != vo.getCmdCd()){
+                if (vo.getCmdCd().equals("wx_send_msg")) {
+                    log.info("微信信息【{}】", vo.getData());
+                    WxMsgVo wxMsgVo = JSONObject.parseObject(vo.getData(), WxMsgVo.class);
+                    WxMsg wxMsg = new WxMsg();
+                    BeanUtils.copyProperties(wxMsgVo, wxMsg);
+                    wxMsg.setCreateTime(new Date());
+                    wxMsg.setComId(vo.getComId());
+                    wxMsg.setComId(vo.getComId());
+                    wxMsgMapper.insert(wxMsg);
+                } else if ("wx_add_friend,wx_send_visiting_card,wx_delete".contains(vo.getCmdCd())) {
+                    log.info("微信事件信息【{}】", vo.getData());
+                    WxEventVo wxEventVo = JSONObject.parseObject(vo.getData(), WxEventVo.class);
+                    WxEvent wxEvent = new WxEvent();
+                    BeanUtils.copyProperties(wxEventVo, wxEvent);
+                    wxEvent.setCreateTime(new Date());
+                    wxEventMapper.insert(wxEvent);
+                }
             }
-        }catch (Exception e){
-            log.info("数据异常！",e);
+        } catch (Exception e) {
+            log.info("数据异常！", e);
             e.printStackTrace();
         }
     }
 
-    public void reportToQueue(ReportCmdVo vo){
-        log.info("ReportCmd:上报消息入队列==》【{}】：【{}】：【{}】",vo.getRspAction(),vo.getCmdCd(),vo.getData());
-        Message reportMessage = new Message(reportTopic, vo.getRspAction(),vo.getDeviceId(),JSONObject.toJSON(vo).toString().getBytes());
+    public void reportToQueue(ReportCmdVo vo) {
+        log.info("ReportCmd:上报消息入队列==》【{}】：【{}】：【{}】", vo.getRspAction(), vo.getCmdCd(), vo.getData());
+        Message reportMessage = new Message(reportTopic, vo.getRspAction(), vo.getDeviceId(), JSONObject.toJSON(vo).toString().getBytes());
         try {
             cmdProducer.send(reportMessage);
         } catch (Exception e) {
@@ -138,7 +136,7 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
 
     @Override
     public void upLoadVocie(String json) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
-        if(StringUtils.isEmpty(json)){
+        if (StringUtils.isEmpty(json)) {
             log.info("上报音频指令为空！！！");
             return;
         }
@@ -146,17 +144,18 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
         String deviceId = data.getString("deviceId");
         String url = data.getString("parm");
         //入队列
-        Message message = new Message(voiceTopic, deviceId,url.getBytes());
+        Message message = new Message(voiceTopic, deviceId, url.getBytes());
         cmdProducer.send(message);
     }
 
     /**
      * 登录数聚客指令上报
+     *
      * @param json
      */
     @Override
     public void loginGeeker(String json) {
-        if(StringUtils.isEmpty(json)){
+        if (StringUtils.isEmpty(json)) {
             log.info("登录指令为空！！！");
             return;
         }

@@ -43,6 +43,6 @@ public class EventReportHandler extends BasicDeviceRspHandler {
 
     @Override
     public String actionName() {
-        return "reportEvent";
+        return "report";
     }
 }

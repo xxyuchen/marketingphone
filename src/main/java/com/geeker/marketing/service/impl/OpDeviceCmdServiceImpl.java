@@ -179,7 +179,6 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         String id = FactoryIdUtils.createId();
         vo.setId(id);
         vo.setDeviceId(deviceId);
-        vo.setCmdParm(data.get("deviceId").toString());
         vo.setComId((Integer) data.get("comId"));
         vo.setCmdTypeCd(CmdEnum.TypeCdEnum.SYS.getCode());
         vo.setCmdCd(CmdEnum.CmdCdEnum.sys_bound.getCode());
@@ -190,14 +189,15 @@ public class OpDeviceCmdServiceImpl implements OpDeviceCmdService {
         Map<String,Object> map = new HashMap<>(3);
         map.put("sysId",1);
         map.put("comId", data.get("comId"));
-        map.put("userId",data.get("userId"));
+        map.put("userId",data.get("boundUserId"));
         map.put("userLoginName",data.get("userLoginName"));
         map.put("userName",data.get("userName"));
         log.info("绑定指令下发【{}】->【{}】", id, deviceId);
+        vo.setCmdParm(JSON.toJSONString(map));
         DeviceCmdVo cmdVo = new DeviceCmdVo();
         cmdVo.setCmdCd(CmdEnum.CmdCdEnum.sys_bound.getCode());
         cmdVo.setCmdId(id);
-        cmdVo.setCmdParm(JSON.toJSONString(map));
+        cmdVo.setCmdParm(vo.getCmdParm());
         cmdVo.setCmdTypeCd(CmdEnum.TypeCdEnum.SYS.getCode());
 
         return boundCmd(vo,deviceId,cmdVo);
