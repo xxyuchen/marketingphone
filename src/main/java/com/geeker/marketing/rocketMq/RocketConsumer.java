@@ -74,7 +74,7 @@ public class RocketConsumer {
         consumer.setConsumeThreadMin(consumerConfig.getMinConsumers());
         consumer.setConsumeThreadMax(consumerConfig.getMaxConsumers());
 
-        consumer.subscribe(issueTopic, "*");
+        consumer.subscribe(issueTopic, env);
 
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
@@ -129,7 +129,7 @@ public class RocketConsumer {
         consumer.setConsumeThreadMin(consumerConfig.getMinConsumers());//16
         consumer.setConsumeThreadMax(consumerConfig.getMaxConsumers());//32
 
-        consumer.subscribe(reportTopic, "*");
+        consumer.subscribe(reportTopic, env);
 
         consumer.registerMessageListener((List<MessageExt> msgs, ConsumeConcurrentlyContext context) -> {
             MessageExt msg = msgs.get(0);

@@ -59,6 +59,9 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
     @Value("${spring.rocketmq.topic.report-topic}")
     private String reportTopic;
 
+    @Value("${env}")
+    private String env;
+
     @Override
     public int insert(OpDeviceReport opDeviceReport) {
         return opDeviceReportMapper.insert(opDeviceReport);
@@ -126,7 +129,7 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
 
     public void reportToQueue(ReportCmdVo vo) {
         log.info("ReportCmd:上报消息入队列==》【{}】：【{}】：【{}】", vo.getRspAction(), vo.getCmdCd(), vo.getData());
-        Message reportMessage = new Message(reportTopic, vo.getRspAction(), vo.getDeviceId(), JSONObject.toJSON(vo).toString().getBytes());
+        Message reportMessage = new Message(reportTopic, env, vo.getRspAction(), JSONObject.toJSON(vo).toString().getBytes());
         try {
             cmdProducer.send(reportMessage);
         } catch (Exception e) {
@@ -144,7 +147,7 @@ public class OpDeviceReportServiceImpl implements OpDeviceReportService {
         String deviceId = data.getString("deviceId");
         String url = data.getString("parm");
         //入队列
-        Message message = new Message(voiceTopic, deviceId, url.getBytes());
+        Message message = new Message(voiceTopic, env,deviceId, url.getBytes());
         cmdProducer.send(message);
     }
 
