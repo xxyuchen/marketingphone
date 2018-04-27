@@ -3,6 +3,7 @@ package com.geeker.marketing.vo;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/3/27 0027.
@@ -19,4 +20,6 @@ public class PhoneVo {
     private String phone;
 
     private String sex;
+
+    private List<Integer> groupIds;
 }
