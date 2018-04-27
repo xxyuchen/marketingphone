@@ -81,8 +81,9 @@ public class RocketConsumer {
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
                 MessageExt msg = list.get(0);
                 String body = new String(msg.getBody());
-                String deviceId = msg.getTags();
-                String id = msg.getKeys();
+                String[] split = msg.getKeys().split("\\|");
+                String deviceId = split[0];
+                String id = split[1];
                 log.info("从队列中取出topIc:【{}】,deviceId:【{}】,id:【{}】,body:【{}】", msg.getTopic(), deviceId, id, body);
                 Channel channel = clientHolder.getClient(deviceId);
                 if (null != channel) {

@@ -59,7 +59,7 @@ public class IssueCmdListener implements ApplicationListener<PublicEvent.IssueCm
             cmdVo.setCmdParm(opDeviceCmd.getCmdParm());
             cmdVo.setCmdTypeCd(opDeviceCmd.getCmdTypeCd());
             cmdVo.setUserId(opDeviceCmd.getUserId());
-            Message message = new Message(issueTopic, env, opDeviceCmd.getId(), JSONObject.toJSONString(cmdVo).getBytes());
+            Message message = new Message(issueTopic, env, opDeviceCmd.getDeviceId()+"|"+opDeviceCmd.getId(), JSONObject.toJSONString(cmdVo).getBytes());
             cmdProducer.send(message);
             log.info("MarketingPhone:指令入队列【{}】【{}】【{}】【{}】...",opDeviceCmd.getId(),opDeviceCmd.getDeviceId(),opDeviceCmd.getCmdCd(),opDeviceCmd.getCmdParm());
         } catch (Exception e) {

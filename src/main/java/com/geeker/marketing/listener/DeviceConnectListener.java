@@ -53,7 +53,7 @@ public class DeviceConnectListener implements ApplicationListener<PublicEvent.Ad
                 map.put("cmdTypeCd",cmd.getCmdTypeCd());
                 map.put("deviceId",cmd.getDeviceId());
                 map.put("userId",cmd.getUserId());
-                Message message = new Message(issueTopic, env,cmd.getId(), JSONObject.toJSONString(map).getBytes());
+                Message message = new Message(issueTopic, env,cmd.getDeviceId()+"|"+cmd.getId(), JSONObject.toJSONString(map).getBytes());
                 cmdProducer.send(message);
                 log.info("MarketingPhone:指令入队列【{}】【{}】【{}】【{}】...",cmd.getId(),cmd.getDeviceId(),cmd.getCmdCd(),cmd.getCmdParm());
             }
