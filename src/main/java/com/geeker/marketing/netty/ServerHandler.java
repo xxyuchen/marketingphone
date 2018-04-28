@@ -109,8 +109,8 @@ public class ServerHandler extends CusHeartBeatHandler {
     }
 
     @Override
-    protected void handleAllIdle(ChannelHandlerContext ctx) {
-        super.handleAllIdle(ctx);
+    protected void handleReaderIdle(ChannelHandlerContext ctx) {
+        super.handleReaderIdle(ctx);
         long connectTime = ctx.channel().attr(Attributes.CONNECT_TIME_ATTR).get();
         boolean authenticated = ctx.channel().attr(Attributes.AUTHENTICATED_ATTR).get();
         //超过30秒没有正常建立连接关闭该链接
