@@ -11,8 +11,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -105,7 +103,19 @@ public class ServerHandler extends CusHeartBeatHandler {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.channel().attr(Attributes.AUTHENTICATED_ATTR).set(false);
+        ctx.channel().attr(Attributes.CONNECT_TIME_ATTR).set(System.currentTimeMillis());
         sendAuth(ctx, "auth", null);
         ctx.fireChannelActive();
+    }
+
+    @Override
+    protected void handleAllIdle(ChannelHandlerContext ctx) {
+        super.handleAllIdle(ctx);
+        long connectTime = ctx.channel().attr(Attributes.CONNECT_TIME_ATTR).get();
+        boolean authenticated = ctx.channel().attr(Attributes.AUTHENTICATED_ATTR).get();
+        //超过30秒没有正常建立连接关闭该链接
+        if (connectTime + 30000 < System.currentTimeMillis() && !authenticated) {
+            ctx.channel().close();
+        }
     }
 }
